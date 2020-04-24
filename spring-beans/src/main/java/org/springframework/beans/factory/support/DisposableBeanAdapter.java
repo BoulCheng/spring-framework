@@ -235,10 +235,23 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 		destroy();
 	}
 
+	/**
+	 * 销毁 bean
+	 * destroy:242, DisposableBeanAdapter (org.springframework.beans.factory.support)
+	 * destroyBean:571, DefaultSingletonBeanRegistry (org.springframework.beans.factory.support)
+	 * destroySingleton:543, DefaultSingletonBeanRegistry (org.springframework.beans.factory.support)
+	 * destroySingleton:1072, DefaultListableBeanFactory (org.springframework.beans.factory.support)
+	 * destroySingletons:504, DefaultSingletonBeanRegistry (org.springframework.beans.factory.support)
+	 * destroySingletons:1065, DefaultListableBeanFactory (org.springframework.beans.factory.support)
+	 * destroyBeans:1060, AbstractApplicationContext (org.springframework.context.support)
+	 * doClose:1029, AbstractApplicationContext (org.springframework.context.support)
+	 * run:948, AbstractApplicationContext$1 (org.springframework.context.support)
+	 */
 	@Override
 	public void destroy() {
 		if (!CollectionUtils.isEmpty(this.beanPostProcessors)) {
 			for (DestructionAwareBeanPostProcessor processor : this.beanPostProcessors) {
+				//1. 回调 @PreDestroy
 				processor.postProcessBeforeDestruction(this.bean, this.beanName);
 			}
 		}
@@ -255,6 +268,7 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 					}, this.acc);
 				}
 				else {
+					//2. 回调 DisposableBean#destroy()
 					((DisposableBean) this.bean).destroy();
 				}
 			}
@@ -269,6 +283,7 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 			}
 		}
 
+		// 3. 回调@Bean destroyMethod
 		if (this.destroyMethod != null) {
 			invokeCustomDestroyMethod(this.destroyMethod);
 		}

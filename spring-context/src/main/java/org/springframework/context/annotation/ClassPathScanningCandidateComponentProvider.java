@@ -485,6 +485,33 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @param metadataReader the ASM ClassReader for the class
 	 * @return whether the class qualifies as a candidate component
 	 */
+
+	/**
+	 * isCandidateComponent:491, ClassPathScanningCandidateComponentProvider (org.springframework.context.annotation)
+	 * scanCandidateComponents:431, ClassPathScanningCandidateComponentProvider (org.springframework.context.annotation)
+	 * findCandidateComponents:316, ClassPathScanningCandidateComponentProvider (org.springframework.context.annotation)
+	 * doScan:276, ClassPathBeanDefinitionScanner (org.springframework.context.annotation)
+	 * parse:132, ComponentScanAnnotationParser (org.springframework.context.annotation)
+	 * doProcessConfigurationClass:295, ConfigurationClassParser (org.springframework.context.annotation)
+	 * processConfigurationClass:249, ConfigurationClassParser (org.springframework.context.annotation)
+	 * parse:206, ConfigurationClassParser (org.springframework.context.annotation)
+	 * parse:174, ConfigurationClassParser (org.springframework.context.annotation)
+	 * processConfigBeanDefinitions:319, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+	 * postProcessBeanDefinitionRegistry:236, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+	 * invokeBeanDefinitionRegistryPostProcessors:275, PostProcessorRegistrationDelegate (org.springframework.context.support)
+	 * invokeBeanFactoryPostProcessors:95, PostProcessorRegistrationDelegate (org.springframework.context.support)
+	 * invokeBeanFactoryPostProcessors:706, AbstractApplicationContext (org.springframework.context.support)
+	 * refresh:532, AbstractApplicationContext (org.springframework.context.support)
+	 * refresh:747, SpringApplication (org.springframework.boot)
+	 * refreshContext:397, SpringApplication (org.springframework.boot)
+	 * run:315, SpringApplication (org.springframework.boot)
+	 * run:1226, SpringApplication (org.springframework.boot)
+	 * run:1215, SpringApplication (org.springframework.boot)
+	 * main:36, SpringSeaApplication (com.zlb.spring.sea)
+	 * @param metadataReader
+	 * @return
+	 * @throws IOException
+	 */
 	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
 		for (TypeFilter tf : this.excludeFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {

@@ -262,6 +262,26 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	}
 
 	/**
+	 * doScan:273, ClassPathBeanDefinitionScanner (org.springframework.context.annotation)
+	 * parse:132, ComponentScanAnnotationParser (org.springframework.context.annotation)
+	 * doProcessConfigurationClass:295, ConfigurationClassParser (org.springframework.context.annotation)
+	 * processConfigurationClass:249, ConfigurationClassParser (org.springframework.context.annotation)
+	 * parse:206, ConfigurationClassParser (org.springframework.context.annotation)
+	 * parse:174, ConfigurationClassParser (org.springframework.context.annotation)
+	 * processConfigBeanDefinitions:319, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+	 * postProcessBeanDefinitionRegistry:236, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+	 * invokeBeanDefinitionRegistryPostProcessors:275, PostProcessorRegistrationDelegate (org.springframework.context.support)
+	 * invokeBeanFactoryPostProcessors:95, PostProcessorRegistrationDelegate (org.springframework.context.support)
+	 * invokeBeanFactoryPostProcessors:706, AbstractApplicationContext (org.springframework.context.support)
+	 * refresh:532, AbstractApplicationContext (org.springframework.context.support)
+	 * refresh:747, SpringApplication (org.springframework.boot)
+	 * refreshContext:397, SpringApplication (org.springframework.boot)
+	 * run:315, SpringApplication (org.springframework.boot)
+	 * run:1226, SpringApplication (org.springframework.boot)
+	 * run:1215, SpringApplication (org.springframework.boot)
+	 * main:35, SpringSeaApplication (com.zlb.spring.sea)
+	 */
+	/**
 	 * Perform a scan within the specified base packages,
 	 * returning the registered bean definitions.
 	 * <p>This method does <i>not</i> register an annotation config processor
@@ -275,6 +295,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		for (String basePackage : basePackages) {
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
+				// 处理scope
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
@@ -282,6 +303,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
 				if (candidate instanceof AnnotatedBeanDefinition) {
+					// 在beanDefinition注册到容器前处理该类Lazy  Primary  DependsOn  Role  Description 注解
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
 				if (checkCandidate(beanName, candidate)) {

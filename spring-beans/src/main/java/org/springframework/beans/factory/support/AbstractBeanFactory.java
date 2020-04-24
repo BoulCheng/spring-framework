@@ -227,6 +227,36 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		return doGetBean(name, requiredType, args, false);
 	}
 
+
+
+	/**
+	 * bean生命周期四个阶段 实例化 -> 属性赋值(依赖注入) -> 初始化 -> 销毁(详见ConfigurableApplicationContext#close())
+	 * 实例化、属性赋值Spring实现，初始化、销毁可以自定义
+	 * 每个阶段对应的一些扩展点:
+	 * 实例化前后扩展(影响多个Bean)
+	 *      * {@link InstantiationAwareBeanPostProcessor#postProcessBeforeInstantiation(Class, String)}
+	 *      * {@link InstantiationAwareBeanPostProcessor#postProcessAfterInstantiation(Object, String)}
+	 *
+	 * 初始化前后处理(影响多个Bean)
+	 *      * {@link BeanPostProcessor#postProcessBeforeInitialization(Object, String)}
+	 *      * {@link BeanPostProcessor#postProcessAfterInitialization(Object, String)}
+	 *
+	 * Aware接口使bean获得一些资源,在初始化阶段之前调用，Bean如果相关的Aware接口，那么在初始化阶段之前会调用回调方法将相关Aware接口可以获取的资源传递给该Bean，然后在Bean初始化时使用这些Aware接口获取的资源(自定义扩展Spring的常用方式)
+	 *   (影响单个Bean 影响实现了Aware接口的Bean)
+	 *   Bean××Aware都是在代码中直接调用 在AbstractAutowireCapableBeanFactory#invokeAwareMethods(String, Object)处理
+	 * 		BeanNameAware
+	 * 		BeanClassLoaderAware
+	 * 		BeanFactoryAware
+	 *   ApplicationContext相关的Aware通过 {@link BeanPostProcessor#postProcessBeforeInitialization(Object, String)} 处理
+	 *      ApplicationContextAwareProcessor - ApplicationContextAware(ResourceLoaderAware\ApplicationEventPublisherAware\MessageSourceAware)
+	 *      (EnvironmentAware\EmbeddedValueResolverAware)
+	 *
+	 * 初始化- InitializingBean#afterPropertiesSet、@Bean initMethod
+	 * 销毁 - 在DisposableBeanAdapter#destroy()处理，@PreDestroy > DisposableBean#destroy() > @Bean destroyMethod
+	 * 	   只有 ConfigurableBeanFactory.SCOPE_SINGLETON 单例bean才可以注册在DisposableBeanAdapter(详见AbstractBeanFactory#registerDisposableBeanIfNecessary(String, Object, RootBeanDefinition))
+	 */
+
+
 	/**
 	 * Return an instance, which may be shared or independent, of the specified bean.
 	 * @param name the name of the bean to retrieve

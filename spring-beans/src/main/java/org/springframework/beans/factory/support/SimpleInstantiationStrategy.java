@@ -114,6 +114,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					return null;
 				});
 			}
+			// 1. 实例化
 			return BeanUtils.instantiateClass(ctor, args);
 		}
 		else {

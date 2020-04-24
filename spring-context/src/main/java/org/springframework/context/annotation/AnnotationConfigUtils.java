@@ -145,6 +145,13 @@ public abstract class AnnotationConfigUtils {
 	 * @return a Set of BeanDefinitionHolders, containing all bean definitions
 	 * that have actually been registered by this call
 	 */
+	/**
+	 * when - AnnotatedBeanDefinitionReader 实例化时执行该方法
+	 * 向bean容器 DefaultListableBeanFactory 注册各种处理器 (put beanName beanDefinition key-value对 value是加载的class) [单例bean才会在容器DefaultListableBeanFactory中保存实例化的对象]
+	 * @param registry
+	 * @param source
+	 * @return
+	 */
 	public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
 

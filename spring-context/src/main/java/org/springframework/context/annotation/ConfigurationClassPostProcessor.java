@@ -328,6 +328,22 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+
+			/**
+			 * processConfigBeanDefinitions:331, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+			 * postProcessBeanDefinitionRegistry:236, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+			 * invokeBeanDefinitionRegistryPostProcessors:275, PostProcessorRegistrationDelegate (org.springframework.context.support)
+			 * invokeBeanFactoryPostProcessors:95, PostProcessorRegistrationDelegate (org.springframework.context.support)
+			 * invokeBeanFactoryPostProcessors:706, AbstractApplicationContext (org.springframework.context.support)
+			 * refresh:532, AbstractApplicationContext (org.springframework.context.support)
+			 * refresh:747, SpringApplication (org.springframework.boot)
+			 * refreshContext:397, SpringApplication (org.springframework.boot)
+			 * run:315, SpringApplication (org.springframework.boot)
+			 * run:1226, SpringApplication (org.springframework.boot)
+			 * run:1215, SpringApplication (org.springframework.boot)
+			 * main:35, SpringSeaApplication (com.zlb.spring.sea)
+			 */
+			// 这里会处理 @Bean initMethod  destroyMethod
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 

@@ -246,6 +246,46 @@ public class AnnotatedBeanDefinitionReader {
 	 * {@link BeanDefinition}, e.g. setting a lazy-init or primary flag
 	 * @since 5.0
 	 */
+
+	/**
+	 * 处理注解 Conditional  Scope  Lazy  Primary  DependsOn  Role  Description
+	 *
+	 * 访问注解信息
+	 AnnotatedElement annotatedElement = String.class;
+	 // TestInherited testInherited = annotatedElement.getAnnotation(TestInherited.class);
+	 //        Annotation annotatedElement1 = testInherited;
+	 Annotation[] annotations = annotatedElement.getDeclaredAnnotations();
+	 Annotation annotations1 = annotations[0];
+	 Class<? extends Annotation> annotationType = annotations1.annotationType();
+	 annotationType.getName();
+	 Method[] methods = annotationType.getDeclaredMethods();
+	 Method method = methods[0];
+	 boolean bb = method.getParameterCount() == 0 && method.getReturnType() != Void.TYPE;
+	 *
+	 * @see AnnotationsScanner#getDeclaredAnnotations(AnnotatedElement, boolean)
+	  *
+	  * getDeclaredAnnotations:493, AnnotationsScanner (org.springframework.core.annotation)
+	  * getDeclaredAnnotations:477, AnnotationsScanner (org.springframework.core.annotation)
+	  * processElement:460, AnnotationsScanner (org.springframework.core.annotation)
+	  * processClassInheritedAnnotations:141, AnnotationsScanner (org.springframework.core.annotation)
+	  * processClass:124, AnnotationsScanner (org.springframework.core.annotation)
+	  * process:107, AnnotationsScanner (org.springframework.core.annotation)
+	  * scan:97, AnnotationsScanner (org.springframework.core.annotation)
+	  * scan:78, AnnotationsScanner (org.springframework.core.annotation)
+	  * scan:242, TypeMappedAnnotations (org.springframework.core.annotation)
+	  * get:174, TypeMappedAnnotations (org.springframework.core.annotation)
+	  * getAnnotationAttributes:101, AnnotatedTypeMetadata (org.springframework.core.type)
+	  * getAnnotationAttributes:113, StandardAnnotationMetadata (org.springframework.core.type)
+	  * attributesFor:285, AnnotationConfigUtils (org.springframework.context.annotation)
+	  * attributesFor:280, AnnotationConfigUtils (org.springframework.context.annotation)
+	  * resolveScopeMetadata:82, AnnotationScopeMetadataResolver (org.springframework.context.annotation)
+	  * doRegisterBean:259, AnnotatedBeanDefinitionReader (org.springframework.context.annotation)
+	  * registerBean:147, AnnotatedBeanDefinitionReader (org.springframework.context.annotation)
+	  * register:137, AnnotatedBeanDefinitionReader (org.springframework.context.annotation)
+	  * register:162, AnnotationConfigApplicationContext (org.springframework.context.annotation)
+	  * <init>:88, AnnotationConfigApplicationContext (org.springframework.context.annotation)
+	  * main:9, AnnotationConfigApplicationContextTest (com.zlb.spring.sea.AnnotationConfigApplicationContextTest)
+	  */
 	private <T> void doRegisterBean(Class<T> beanClass, @Nullable String name,
 			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
 			@Nullable BeanDefinitionCustomizer[] customizers) {

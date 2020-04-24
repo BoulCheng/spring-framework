@@ -122,6 +122,23 @@ class ConfigurationClassBeanDefinitionReader {
 	}
 
 	/**
+	 * loadBeanDefinitionsForBeanMethod:196, ConfigurationClassBeanDefinitionReader (org.springframework.context.annotation)
+	 * loadBeanDefinitionsForConfigurationClass:144, ConfigurationClassBeanDefinitionReader (org.springframework.context.annotation)
+	 * loadBeanDefinitions:120, ConfigurationClassBeanDefinitionReader (org.springframework.context.annotation)
+	 * processConfigBeanDefinitions:331, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+	 * postProcessBeanDefinitionRegistry:236, ConfigurationClassPostProcessor (org.springframework.context.annotation)
+	 * invokeBeanDefinitionRegistryPostProcessors:275, PostProcessorRegistrationDelegate (org.springframework.context.support)
+	 * invokeBeanFactoryPostProcessors:95, PostProcessorRegistrationDelegate (org.springframework.context.support)
+	 * invokeBeanFactoryPostProcessors:706, AbstractApplicationContext (org.springframework.context.support)
+	 * refresh:532, AbstractApplicationContext (org.springframework.context.support)
+	 * refresh:747, SpringApplication (org.springframework.boot)
+	 * refreshContext:397, SpringApplication (org.springframework.boot)
+	 * run:315, SpringApplication (org.springframework.boot)
+	 * run:1226, SpringApplication (org.springframework.boot)
+	 * run:1215, SpringApplication (org.springframework.boot)
+	 * main:35, SpringSeaApplication (com.zlb.spring.sea)
+	 */
+	/**
 	 * Read a particular {@link ConfigurationClass}, registering bean definitions
 	 * for the class itself and all of its {@link Bean} methods.
 	 */
@@ -141,10 +158,13 @@ class ConfigurationClassBeanDefinitionReader {
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
+			//处理 @Bean 注解的方法，并生成ConfigurationClassBeanDefinitionReader.ConfigurationClassBeanDefinition注册到bean容器中
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
 
+		//
 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
+		//
 		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
 	}
 

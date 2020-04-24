@@ -528,10 +528,25 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Allows post-processing of the bean factory in context subclasses.
 				postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context.
+				// Invoke factory processors registered as beans in the context. 调用上下文中注册为bean的工厂处理器。
+				/**
+				 *
+				 * 1.扫描配置的包路径，把直接或间接被org.springframework.stereotype.Component  javax.annotation.ManagedBean  javax.inject.Named 这三个注解任意一个注解注解的class 以ScannedGenericBeanDefinition注册到容器中， in{@link ClassPathBeanDefinitionScanner#doScan(String...)}
+				 * 2.处理 @Bean 注解的方法，并生成ConfigurationClassBeanDefinitionReader.ConfigurationClassBeanDefinition注册到bean容器中, in{@link ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsForBeanMethod(BeanMethod)}
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				/**
+				 * 实例化BeanPostProcessor接口实现类, AnnotationAwareOrderComparator 排序后，并把实例注册(保存)到容器中(通过AbstractBeanFactory#addBeanPostProcessor(BeanPostProcessor))
+				 * 两个排序相关的接口：PriorityOrdered、Ordered
+				 * PriorityOrdered 优先级高于 Ordered
+				 * Extension of the Ordered interface, expressing a priority ordering: PriorityOrdered objects are always applied before plain Ordered objects regardless of their order values.
+				 * When sorting a set of Ordered objects, PriorityOrdered objects and plain Ordered objects are effectively treated as two separate subsets, with the set of PriorityOrdered objects preceding the set of plain Ordered objects and with relative ordering applied within those subsets.
+				 *
+				 * PriorityOrdered > Ordered > PriorityOrdered、Ordered接口都未实现 > 实现了MergedBeanDefinitionPostProcessor  同一层的再排序
+				 * 根据排序接口返回值排序，默认升序排序，返回值越低优先级越高
+				 */
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -547,6 +562,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				/**
+				 * 实例所有剩余非懒加载的单例Bean
+				 */
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.

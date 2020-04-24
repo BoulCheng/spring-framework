@@ -34,6 +34,14 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
+ * RootBeanDefinition本质上是运行时统一的beanDefinition视图
+ *
+ * A root bean definition is essentially the 'unified' bean definition view at runtime.
+ *
+ */
+
+
+/**
  * A root bean definition represents the merged bean definition that backs
  * a specific bean in a Spring BeanFactory at runtime. It might have been created
  * from multiple original bean definitions that inherit from each other,
