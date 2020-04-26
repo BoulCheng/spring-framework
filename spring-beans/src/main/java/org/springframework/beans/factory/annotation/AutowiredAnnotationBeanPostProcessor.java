@@ -606,7 +606,15 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 		}
 	}
 
-
+	/**
+	 * 注入方式 - 注解、字段 field
+	 * @Service
+	 * public class TestService{
+	 *
+	 *     @Autowired
+	 *     private TestServiceDepend testServiceDepend;
+	 * }
+	 */
 	/**
 	 * Class representing injection information about an annotated field.
 	 */
@@ -680,7 +688,19 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 		}
 	}
 
-
+	/**
+	 * 注入方式 - setter方法注入
+	 * @Service
+	 * public class TestService{
+	 *
+	 *     private ComponentB componentB;
+	 *
+	 *     @Autowired
+	 *     public void setComponentB(ComponentB componentB) {
+	 *         this.componentB = componentB;
+	 *     }
+	 * }
+	 */
 	/**
 	 * Class representing injection information about an annotated method.
 	 */

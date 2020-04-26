@@ -230,7 +230,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 
 	/**
-	 * bean生命周期四个阶段 实例化 -> 属性赋值(依赖注入) -> 初始化 -> 销毁(详见ConfigurableApplicationContext#close())
+	 * bean生命周期四个阶段 实例化 -> 属性赋值(依赖注入 在 AutowiredAnnotationBeanPostProcessor 处理) -> 初始化 -> 销毁(详见ConfigurableApplicationContext#close())
 	 * 实例化、属性赋值Spring实现，初始化、销毁可以自定义
 	 * 每个阶段对应的一些扩展点:
 	 * 实例化前后扩展(影响多个Bean)

@@ -620,7 +620,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Object exposedObject = bean;
 		try {
 			//4.用bean定义中的属性值填充给定BeanWrapper中的bean实例。
-			//B.属性赋值
+			//B.属性赋值-依赖注入
 			/**
 			 *      * @see AutowiredAnnotationBeanPostProcessor#postProcessProperties(PropertyValues, Object, String)
 			 *      * @see AutowiredAnnotationBeanPostProcessor#autowiredAnnotationTypes 构造函数中赋值
@@ -1245,6 +1245,24 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
+			//注入方式 - 构造器注入 自动装配构造器
+			/**
+			 *
+			 @Service
+			 public class TestService{
+
+			 private ComponentA componentA;
+
+			 public TestService() {
+			 }
+
+			 @Autowired
+			 public TestService(ComponentA componentA) {
+			 this.componentA = componentA;
+			 }
+
+			 }
+			 */
 			return autowireConstructor(beanName, mbd, ctors, args);
 		}
 

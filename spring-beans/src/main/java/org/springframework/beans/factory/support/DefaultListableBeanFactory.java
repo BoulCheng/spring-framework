@@ -1287,6 +1287,33 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				autowiredBeanNames.add(autowiredBeanName);
 			}
 			if (instanceCandidate instanceof Class) {
+				/**
+				 *
+				 * @see DependencyDescriptor#resolveCandidate(String, Class, BeanFactory) 获取需要注入bean ， 实际调用beanFactory.getBean(beanName);获取
+				 *
+				 * doResolveDependency:1287, DefaultListableBeanFactory (org.springframework.beans.factory.support)
+				 * resolveDependency:1207, DefaultListableBeanFactory (org.springframework.beans.factory.support)
+				 * inject:640, AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement (org.springframework.beans.factory.annotation)
+				 * inject:130, InjectionMetadata (org.springframework.beans.factory.annotation)
+				 * postProcessProperties:399, AutowiredAnnotationBeanPostProcessor (org.springframework.beans.factory.annotation)
+				 * populateBean:1422, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)
+				 * doCreateBean:594, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)
+				 * createBean:517, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)
+				 * lambda$doGetBean$0:323, AbstractBeanFactory (org.springframework.beans.factory.support)
+				 * getObject:-1, 1327871893 (org.springframework.beans.factory.support.AbstractBeanFactory$$Lambda$119)
+				 * getSingleton:222, DefaultSingletonBeanRegistry (org.springframework.beans.factory.support)
+				 * doGetBean:321, AbstractBeanFactory (org.springframework.beans.factory.support)
+				 * getBean:202, AbstractBeanFactory (org.springframework.beans.factory.support)
+				 * preInstantiateSingletons:879, DefaultListableBeanFactory (org.springframework.beans.factory.support)
+				 * finishBeanFactoryInitialization:878, AbstractApplicationContext (org.springframework.context.support)
+				 * refresh:550, AbstractApplicationContext (org.springframework.context.support)
+				 * refresh:747, SpringApplication (org.springframework.boot)
+				 * refreshContext:397, SpringApplication (org.springframework.boot)
+				 * run:315, SpringApplication (org.springframework.boot)
+				 * run:1226, SpringApplication (org.springframework.boot)
+				 * run:1215, SpringApplication (org.springframework.boot)
+				 * main:35, SpringSeaApplication (com.zlb.spring.sea)
+				 */
 				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this);
 			}
 			Object result = instanceCandidate;
