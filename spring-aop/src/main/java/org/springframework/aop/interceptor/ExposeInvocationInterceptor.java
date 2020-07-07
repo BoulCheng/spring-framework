@@ -87,14 +87,22 @@ public final class ExposeInvocationInterceptor implements MethodInterceptor, Pri
 	private ExposeInvocationInterceptor() {
 	}
 
+	/**
+	 * aop调用链开始方法
+	 * @param mi
+	 * @return
+	 * @throws Throwable
+	 */
 	@Override
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		MethodInvocation oldInvocation = invocation.get();
+		// 设置正在被调用的 ReflectiveMethodInvocation 对象实例
 		invocation.set(mi);
 		try {
 			return mi.proceed();
 		}
 		finally {
+			// 调用链处理完设置回旧的ReflectiveMethodInvocation 对象实例
 			invocation.set(oldInvocation);
 		}
 	}

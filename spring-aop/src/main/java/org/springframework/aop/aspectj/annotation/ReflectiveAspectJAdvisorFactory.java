@@ -122,7 +122,12 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 				new LazySingletonAspectInstanceFactoryDecorator(aspectInstanceFactory);
 
 		List<Advisor> advisors = new ArrayList<>();
+		// 处理方法
+		// 排除被 @Pointcut 注解的类的方法
 		for (Method method : getAdvisorMethods(aspectClass)) {
+			// 判断方法是否有Pointcut.class, Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class中任意注解
+			// 并获取注解的 "pointcut", "value" 方法 这两个方法都是表达式
+			// 生成每个方法对应的 Advisor
 			Advisor advisor = getAdvisor(method, lazySingletonAspectInstanceFactory, advisors.size(), aspectName);
 			if (advisor != null) {
 				advisors.add(advisor);
@@ -136,6 +141,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 		}
 
 		// Find introduction fields.
+		// 处理字段
 		for (Field field : aspectClass.getDeclaredFields()) {
 			Advisor advisor = getDeclareParentsAdvisor(field);
 			if (advisor != null) {
@@ -150,6 +156,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 		final List<Method> methods = new ArrayList<>();
 		ReflectionUtils.doWithMethods(aspectClass, method -> {
 			// Exclude pointcuts
+			// 排除被 @Pointcut 注解的方法
 			if (AnnotationUtils.getAnnotation(method, Pointcut.class) == null) {
 				methods.add(method);
 			}
@@ -184,6 +191,14 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 	}
 
 
+	/**
+	 * 生成Advisor的方法
+	 * @param candidateAdviceMethod
+	 * @param aspectInstanceFactory
+	 * @param declarationOrderInAspect
+	 * @param aspectName
+	 * @return
+	 */
 	@Override
 	@Nullable
 	public Advisor getAdvisor(Method candidateAdviceMethod, MetadataAwareAspectInstanceFactory aspectInstanceFactory,
@@ -219,6 +234,17 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 	}
 
 
+	/**
+	 *
+	 * 生成Advice
+	 * 通过该方法(切面的方法)被注解的注解判断是哪种增强类型再生成对应的advice增强返回
+	 * @param candidateAdviceMethod
+	 * @param expressionPointcut
+	 * @param aspectInstanceFactory
+	 * @param declarationOrder
+	 * @param aspectName
+	 * @return
+	 */
 	@Override
 	@Nullable
 	public Advice getAdvice(Method candidateAdviceMethod, AspectJExpressionPointcut expressionPointcut,
@@ -247,6 +273,9 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 		AbstractAspectJAdvice springAdvice;
 
+		/**
+		 * 注解类型定义 {@link org.springframework.aop.aspectj.annotation.AbstractAspectJAdvisorFactory.AspectJAnnotation#AspectJAnnotation}
+		 */
 		switch (aspectJAnnotation.getAnnotationType()) {
 			case AtPointcut:
 				if (logger.isDebugEnabled()) {

@@ -291,6 +291,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * identified as one to proxy by the subclass.
 	 * @see #getAdvicesAndAdvisorsForBean
 	 */
+	/**
+	 * 在bean初始化(initializeBean)时初始化的最后一步应用后置处理器BeanPostProcessor#postProcessAfterInitialization(aop对应是 AnnotationAwareAspectJAutoProxyCreator 是AbstractAutoProxyCreator的子类)创建代理类
+	 * @param bean
+	 * @param beanName
+	 * @return
+	 */
 	@Override
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
@@ -449,15 +455,30 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		ProxyFactory proxyFactory = new ProxyFactory();
 		proxyFactory.copyFrom(this);
 
+		// 配置不管是否有实现接口，都是强制使用Cglib的方式来实现
+		//注解方式：
+		//@EnableAspectJAutoProxy(proxyTargetClass = true) // 这样子就是默认使用CGLIB
+		//proxyTargetClass 英文单词意思即是 代理目标类 而jdk是代理目标接口
+
+		// AnnotationAwareAspectJAutoProxyCreator 默认是proxyTargetClass=true 在AopAutoConfiguration自动配置
+		// 禁用AopAutoConfiguration 同时开启EnableAspectJAutoProxy即可使用默认的proxyTargetClass=false
+		// @EnableAspectJAutoProxy
+		// @SpringBootApplication(exclude = {AopAutoConfiguration.class})
+
+		// 判断使用 jdk动态代理还是cglib代理
 		if (!proxyFactory.isProxyTargetClass()) {
 			if (shouldProxyTargetClass(beanClass, beanName)) {
 				proxyFactory.setProxyTargetClass(true);
 			}
 			else {
+				// 设置jdk代理接口
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
 
+		/**
+		 * specificInterceptors 返回于 {@link BeanFactoryAspectJAdvisorsBuilder#buildAspectJAdvisors}
+		 */
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);

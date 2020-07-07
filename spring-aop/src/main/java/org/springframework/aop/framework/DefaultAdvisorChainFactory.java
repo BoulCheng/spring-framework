@@ -47,6 +47,14 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings("serial")
 public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializable {
 
+	/**
+	 * 组合在该InvocationHandler中的ProxyFactory(Advised config)里面的 Advisor列表是匹配该类的所有Advisor， 一个Advisor对应一个Advice
+	 * 获取能匹配到该方法的advice增强列表
+	 * @param config
+	 * @param method
+	 * @param targetClass
+	 * @return
+	 */
 	@Override
 	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(
 			Advised config, Method method, @Nullable Class<?> targetClass) {
@@ -63,16 +71,20 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 			if (advisor instanceof PointcutAdvisor) {
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
+				// 先判断类是否匹配
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
+					/**
+					 * 运行时类型是 {@link ReflectiveAspectJAdvisorFactory#getPointCut} 方法返回得 AspectJExpressionPointcut
+					 */
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					boolean match;
 					if (mm instanceof IntroductionAwareMethodMatcher) {
 						if (hasIntroductions == null) {
 							hasIntroductions = hasMatchingIntroductions(advisors, actualClass);
 						}
+						// 匹配方法， 通过表达式匹配该方法 返回是否匹配成功
 						match = ((IntroductionAwareMethodMatcher) mm).matches(method, actualClass, hasIntroductions);
-					}
-					else {
+					} else {
 						match = mm.matches(method, actualClass);
 					}
 					if (match) {
@@ -83,8 +95,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 							for (MethodInterceptor interceptor : interceptors) {
 								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm));
 							}
-						}
-						else {
+						} else {
 							interceptorList.addAll(Arrays.asList(interceptors));
 						}
 					}

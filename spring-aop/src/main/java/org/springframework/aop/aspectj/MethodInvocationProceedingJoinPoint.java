@@ -83,6 +83,11 @@ public class MethodInvocationProceedingJoinPoint implements ProceedingJoinPoint,
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * 增强方法中调用继续执行被增强方法
+	 * @return
+	 * @throws Throwable
+	 */
 	@Override
 	public Object proceed() throws Throwable {
 		return this.methodInvocation.invocableClone().proceed();

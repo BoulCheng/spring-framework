@@ -633,6 +633,12 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
 		return invokeAdviceMethodWithGivenArgs(argBinding(jp, jpMatch, returnValue, t));
 	}
 
+	/**
+	 * 调用增强方法
+	 * @param args
+	 * @return
+	 * @throws Throwable
+	 */
 	protected Object invokeAdviceMethodWithGivenArgs(Object[] args) throws Throwable {
 		Object[] actualArgs = args;
 		if (this.aspectJAdviceMethod.getParameterCount() == 0) {
@@ -641,6 +647,11 @@ public abstract class AbstractAspectJAdvice implements Advice, AspectJPrecedence
 		try {
 			ReflectionUtils.makeAccessible(this.aspectJAdviceMethod);
 			// TODO AopUtils.invokeJoinpointUsingReflection
+			/**
+			 * aspectJAdviceMethod 切面增强方法Method对象
+			 * aspectInstanceFactory  LazySingletonAspectInstanceFactoryDecorator装饰器 被装饰者为BeanFactoryAspectInstanceFactory
+			 * actualArgs 参数为 MethodInvocationProceedingJoinPoint 该类属性methodInvocation为ReflectiveMethodInvocation实例
+			 */
 			return this.aspectJAdviceMethod.invoke(this.aspectInstanceFactory.getAspectInstance(), actualArgs);
 		}
 		catch (IllegalArgumentException ex) {

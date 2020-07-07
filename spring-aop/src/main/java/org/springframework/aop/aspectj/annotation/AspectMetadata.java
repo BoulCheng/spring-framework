@@ -100,6 +100,9 @@ public class AspectMetadata implements Serializable {
 		this.aspectClass = ajType.getJavaClass();
 		this.ajType = ajType;
 
+		// 处理 Aspect 注解方法
+		//             Aspect aspectAnn = (Aspect)this.clazz.getAnnotation(Aspect.class);
+		//            String perClause = aspectAnn.value();
 		switch (this.ajType.getPerClause().getKind()) {
 			case SINGLETON:
 				this.perClausePointcut = Pointcut.TRUE;

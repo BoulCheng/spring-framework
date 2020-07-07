@@ -221,8 +221,16 @@ public abstract class AopUtils {
 	 * for this bean includes any introductions
 	 * @return whether the pointcut can apply on any method
 	 */
+	/**
+	 * 判断pointcut是否能匹配该类的任意方法
+	 * @param pc
+	 * @param targetClass
+	 * @param hasIntroductions
+	 * @return
+	 */
 	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
 		Assert.notNull(pc, "Pointcut must not be null");
+		// 判断是否匹配类
 		if (!pc.getClassFilter().matches(targetClass)) {
 			return false;
 		}
@@ -247,6 +255,7 @@ public abstract class AopUtils {
 		for (Class<?> clazz : classes) {
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
 			for (Method method : methods) {
+				// 判断是否有任意方法匹配
 				if (introductionAwareMethodMatcher != null ?
 						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions) :
 						methodMatcher.matches(method, targetClass)) {

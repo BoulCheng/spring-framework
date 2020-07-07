@@ -110,6 +110,8 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 			// A singleton aspect.
 			this.pointcut = this.declaredPointcut;
 			this.lazy = false;
+			// 一个Advisor对应一个Advice
+			//对应的Advice: AspectJAroundAdvice AspectJMethodBeforeAdvice AspectJAfterAdvice AspectJAfterReturningAdvice AspectJAfterThrowingAdvice 其中一个
 			this.instantiatedAdvice = instantiateAdvice(this.declaredPointcut);
 		}
 	}

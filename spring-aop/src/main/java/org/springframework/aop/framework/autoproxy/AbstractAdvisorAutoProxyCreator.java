@@ -91,7 +91,9 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 * @see #extendAdvisors
 	 */
 	protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
+		// 先获取所有被@Aspect注解的类的所有被 任意一个Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class解决的方法生成的所有候选Advisor列表
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
+		// 获取可以能匹配该类的任意方法的Advisor(pointcut)  ( 判断是否匹配类 判断该类是否有任意方法匹配)
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
 		extendAdvisors(eligibleAdvisors);
 		if (!eligibleAdvisors.isEmpty()) {

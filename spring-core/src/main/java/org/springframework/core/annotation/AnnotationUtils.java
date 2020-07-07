@@ -1051,6 +1051,7 @@ public abstract class AnnotationUtils {
 			return null;
 		}
 		try {
+			// 通过反射获取注解的方法的值
 			Method method = annotation.annotationType().getDeclaredMethod(attributeName);
 			ReflectionUtils.makeAccessible(method);
 			return method.invoke(annotation);

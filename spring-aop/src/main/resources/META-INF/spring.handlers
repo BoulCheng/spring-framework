@@ -1,1 +1,2 @@
 http\://www.springframework.org/schema/aop=org.springframework.aop.config.AopNamespaceHandler
+#触发注册aop相关的各个BeanDefinition 特别是 org.springframework.aop.config.internalAutoProxyCreator -> org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator

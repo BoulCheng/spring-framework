@@ -75,6 +75,13 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	 * is that aspects written in the code-style (AspectJ language) also have the annotation present
 	 * when compiled by ajc with the -1.5 flag, yet they cannot be consumed by Spring AOP.
 	 */
+	/**
+	 * 判断参数类是否有@Aspect注解 且 不是由ajc编译的
+	 *
+	 * 我们认为，如果某个方面具有@Aspect注释，并且不是由ajc编译的，那么它就是适合由Spring AOP系统使用的AspectJ方面。后面这个测试的原因是，用代码风格(AspectJ语言)编写的方面在ajc用-1.5标记编译时也有注释，但是它们不能被Spring AOP使用。
+	 * @param clazz
+	 * @return
+	 */
 	@Override
 	public boolean isAspect(Class<?> clazz) {
 		return (hasAspectAnnotation(clazz) && !compiledByAjc(clazz));
@@ -131,6 +138,8 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	@Nullable
 	protected static AspectJAnnotation<?> findAspectJAnnotationOnMethod(Method method) {
 		for (Class<?> clazz : ASPECTJ_ANNOTATION_CLASSES) {
+			// 判断方法是否有Pointcut.class, Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class中任意注解
+			// 并获取注解的 "pointcut", "value" 方法 这两个方法都是表达式
 			AspectJAnnotation<?> foundAnnotation = findAnnotation(method, (Class<Annotation>) clazz);
 			if (foundAnnotation != null) {
 				return foundAnnotation;
@@ -212,6 +221,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 
 		private String resolveExpression(A annotation) {
 			for (String attributeName : EXPRESSION_ATTRIBUTES) {
+				//获取注解的 "pointcut", "value" 方法 这两个方法都是表达式
 				Object val = AnnotationUtils.getValue(annotation, attributeName);
 				if (val instanceof String) {
 					String str = (String) val;

@@ -36,6 +36,9 @@ public abstract class AbstractExpressionPointcut implements ExpressionPointcut, 
 	@Nullable
 	private String location;
 
+	/**
+	 * 匹配切点的表达式 匹配需要被增强的spring容器中bean的方法
+	 */
 	@Nullable
 	private String expression;
 

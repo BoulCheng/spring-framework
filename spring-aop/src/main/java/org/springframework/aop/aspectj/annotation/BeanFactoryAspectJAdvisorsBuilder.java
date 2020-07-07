@@ -80,6 +80,18 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
+	/**
+	 * Advisor 列表
+	 * a Spring Advisor, each AspectJ advice method.
+	 *
+	 * 处理切面类的关键点:
+	 * 判断类是否有@Aspect注解 且 不是由ajc编译的
+	 * 类的方法先排除被 @Pointcut 注解的方法
+	 * 判断方法是否被Pointcut.class, Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class中任意一注解注解
+	 * 并获取以上注解的 "pointcut", "value" 方法 这两个方法都是匹配切点的表达式
+	 * 生成每个切面方法(PointcutAdvisor)对应的 Advisor
+	 * @return
+	 */
 	public List<Advisor> buildAspectJAdvisors() {
 		List<String> aspectNames = this.aspectBeanNames;
 
@@ -101,17 +113,30 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						if (beanType == null) {
 							continue;
 						}
+						// 判断类是否有@Aspect注解 且 不是由ajc编译的
 						if (this.advisorFactory.isAspect(beanType)) {
 							aspectNames.add(beanName);
+					// 		// 处理 Aspect 注解方法
+					//		//             Aspect aspectAnn = (Aspect)this.clazz.getAnnotation(Aspect.class);
+					//		//            String perClause = aspectAnn.value();
+							// 默认都是 PerClauseKind.SINGLETON
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								//	 排除被 @Pointcut 注解的类的方法
+								//	 判断方法是否有Pointcut.class, Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class中任意注解
+								//	 并获取注解的 "pointcut", "value" 方法 这两个方法都是表达式
+								//	 生成每个方法对应的 Advisor
+
+
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
+									// 单例bean缓存Advisor列表
 									this.advisorsCache.put(beanName, classAdvisors);
 								}
 								else {
+									// 非单例bean缓存工厂  ？
 									this.aspectFactoryCache.put(beanName, factory);
 								}
 								advisors.addAll(classAdvisors);

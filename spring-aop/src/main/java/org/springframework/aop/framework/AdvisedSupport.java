@@ -93,11 +93,17 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * List of Advisors. If an Advice is added, it will be wrapped
 	 * in an Advisor before being added to this List.
 	 */
+	/**
+	 * 来源 {@link BeanFactoryAspectJAdvisorsBuilder#buildAspectJAdvisors}
+	 */
 	private List<Advisor> advisors = new ArrayList<>();
 
 	/**
 	 * Array updated on changes to the advisors list, which is easier
 	 * to manipulate internally.
+	 */
+	/**
+	 * @see advisors
 	 */
 	private Advisor[] advisorArray = new Advisor[0];
 
@@ -242,6 +248,10 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	}
 
 
+	/**
+	 * Advisor列表
+	 * @return
+	 */
 	@Override
 	public final Advisor[] getAdvisors() {
 		return this.advisorArray;

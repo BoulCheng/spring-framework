@@ -46,6 +46,21 @@ import org.springframework.aop.SpringProxy;
 @SuppressWarnings("serial")
 public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 
+	/**
+	 * 在bean初始化(initializeBean)时初始化的最后一步应用aop对应的后置处理器BeanPostProcessor#postProcessAfterInitialization(AnnotationAwareAspectJAutoProxyCreator)创建代理类
+	 *
+	 * createAopProxy:51, DefaultAopProxyFactory (org.springframework.aop.framework)
+	 * createAopProxy:105, ProxyCreatorSupport (org.springframework.aop.framework)
+	 * getProxy:110, ProxyFactory (org.springframework.aop.framework)
+	 * createProxy:471, AbstractAutoProxyCreator (org.springframework.aop.framework.autoproxy)
+	 * wrapIfNecessary:350, AbstractAutoProxyCreator (org.springframework.aop.framework.autoproxy)
+	 * postProcessAfterInitialization:299, AbstractAutoProxyCreator (org.springframework.aop.framework.autoproxy)
+	 * applyBeanPostProcessorsAfterInitialization:431, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)
+	 * initializeBean:1800, AbstractAutowireCapableBeanFactory (org.springframework.beans.factory.support)
+	 * @param config
+	 * @return
+	 * @throws AopConfigException
+	 */
 	@Override
 	public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException {
 		if (config.isOptimize() || config.isProxyTargetClass() || hasNoUserSuppliedProxyInterfaces(config)) {
