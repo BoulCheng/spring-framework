@@ -381,6 +381,27 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see #doLoadDocument
 	 * @see #registerBeanDefinitions
 	 */
+	/**
+	 * 加载XML文档和解析注册Bean
+	 *
+	 * 获取对 XML 文件的验证模式 -
+	 * 	- XML 文件的验证模式保证了 XML 文件的正确性，而比 较常用的验证模式有两种: DTD 和 XSD
+	 * 		- DTD ( Document Type Definition )即文挡类型定义，是一种 XML 约束模式语言，是 XML 文件的验证机制，属于 XML 文件组成的一部分。
+	 * 		- 可以通过比较 XML 文档和 DTD 文件来看文档是否符合规范，元素和标签使用是否正确
+	 * 	- XML Schema 语言就是 XSD ( XML Schemas Definition )。 XML Schema描述了 XML 文梢 的结构。
+	 * 		- 可以用一个指定的XML Schema来验证某个XML文档， 以检查该XML文档是否符 合其要求
+	 * 		- 除了要声明名称空间外 xmlns，还必须通过schemaLocation指定该名称空间所对应的 XML Schema文档存储位置，一部分是名称空间的 URI，另一部分就是该名称空间所标识的XML Schema 文件位置或 URL地址
+	 *
+	 * 加载 XML 文件，并得到对应的 Document。
+	 *	- EntityResolve的作用是定义如何寻找 DTD, 默认通过xml的定义从网络下载
+	 *		- 将 DTD 文件放到项目中某处 ，在实现时直接将此文档读 取并返回给 SAX 即可。 这样就避免了通过网络来寻找相应的声明
+	 *		- 加载 xsd 类型默 认到 META-INF/Spring.schemas文件找到 systemid 所对应的 XSD文件并加载;systemid 为schemaLocation指定的XML Schema 文件位置或 URL地址
+	 * 根据返回的 Document 注册 Bean 信息 。
+	 * @param inputSource
+	 * @param resource
+	 * @return
+	 * @throws BeanDefinitionStoreException
+	 */
 	protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
 			throws BeanDefinitionStoreException {
 

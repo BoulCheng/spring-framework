@@ -410,6 +410,21 @@ public class BeanDefinitionParserDelegate {
 	 * if there were errors during parse. Errors are reported to the
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
+	//
+
+	/**
+	 *
+	 1. 提取元素中的id以及name属性。
+	 2. 进一步解析其他所有属性并统一封装至 GenericBeanDefinition类型的实例。
+	 	- 在 Spring 中存在三种实现: RootBeanDefinition、 ChildBeanDefinition 以及 GenericBeanDefinition 、AnnotatedGenericBeanDefinition
+	 	- BeanDefinition 是配置文件<bean>元素标签在容器中的内部表示形式
+	 	- Spring容器的 BeanDefinitionRegistry就像 是 Spring配置信息的内存数据库，主要是以 map 的形式保存，后续操作直接从 BeanDefinition­ Registry 中读取配置信息 。
+	 3. 如果检测到 bean 没有指定 beanName，那么使用默认规则为此 Bean 生成 beanName。
+	 4. 将获取到的信息封装到 BeanDefinitionHolder 的实例中 。
+	 * @param ele
+	 * @param containingBean
+	 * @return
+	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
 		String id = ele.getAttribute(ID_ATTRIBUTE);
@@ -514,15 +529,22 @@ public class BeanDefinitionParserDelegate {
 		try {
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
+			// 对所有 bean 属性的解析
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
+			//解析子元素meta 当需要使用里面的信息的时候可以通过 BeanDefinition 的 getAttribute(key)方法进行获取
 			parseMetaElements(ele, bd);
+			// 解析子元素 lookup-method 获取器注入是一种特 殊的方法注入，它是把一个方法声明为返回某种类型的 bean，但实际要返回的 bean 是在配 置文件里面配置的，此方法可用在设计有些可插拔的功能上，解除程序依赖
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
+			// 方法替换:可以在运行时用新的方法替换现有的方法 。 与之前的 look-up 不同的是， replaced-method不但可以动态地替换返回实体 bean，而且还能动态地更改原有方法的逻辑
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
 
+			// 解析子元素 constructor-arg
 			parseConstructorArgElements(ele, bd);
+			// 解析子元素 property
 			parsePropertyElements(ele, bd);
+			//解析子元素 qualifier
 			parseQualifierElements(ele, bd);
 
 			bd.setResource(this.readerContext.getResource());
@@ -552,6 +574,14 @@ public class BeanDefinitionParserDelegate {
 	 * @param beanName bean name
 	 * @param containingBean containing bean definition
 	 * @return a bean definition initialized according to the bean element attributes
+	 */
+	/**
+	 * 对所有 bean 属性的解析 <bean/>的所有属性解析
+	 * @param ele
+	 * @param beanName
+	 * @param containingBean
+	 * @param bd
+	 * @return
 	 */
 	public AbstractBeanDefinition parseBeanDefinitionAttributes(Element ele, String beanName,
 			@Nullable BeanDefinition containingBean, AbstractBeanDefinition bd) {

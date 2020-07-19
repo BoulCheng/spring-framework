@@ -118,6 +118,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * Register each bean definition within the given root {@code <beans/>} element.
 	 */
 	@SuppressWarnings("deprecation")  // for Environment.acceptsProfiles(String...)
+	/**
+	 * 注册 BeanDefinition
+	 */
 	protected void doRegisterBeanDefinitions(Element root) {
 		// Any nested <beans> elements will cause recursion in this method. In
 		// order to propagate and preserve <beans> default-* attributes correctly,
@@ -129,6 +132,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		this.delegate = createDelegate(getReaderContext(), root, parent);
 
 		if (this.delegate.isDefaultNamespace(root)) {
+			// 获取环境配置 开发、生产环境
 			String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
 			if (StringUtils.hasText(profileSpec)) {
 				String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
@@ -145,6 +149,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 
+		// 模版方法模式
 		preProcessXml(root);
 		parseBeanDefinitions(root, this.delegate);
 		postProcessXml(root);
@@ -173,19 +178,27 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				if (node instanceof Element) {
 					Element ele = (Element) node;
 					if (delegate.isDefaultNamespace(ele)) {
+						// 默认标签处理注册bean
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						// 自定义标签处理
 						delegate.parseCustomElement(ele);
 					}
 				}
 			}
 		}
 		else {
+			// 自定义标签处理
 			delegate.parseCustomElement(root);
 		}
 	}
 
+	/**
+	 * 分别对4种不同标签(import、 alias、 bean、beans)做了不同的处理。
+	 * @param ele
+	 * @param delegate
+	 */
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
 			importBeanDefinitionResource(ele);
@@ -302,9 +315,18 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * Process the given bean element, parsing the bean definition
 	 * and registering it with the registry.
 	 */
+	/**
+	 * 1. 获取BeanDefinitionHolder类型的实例 bdHolder， 经过这个方法后， bdHolder实例已经包含我 们配置文件中配置的各种属性了，例如 class、 name、 id、 alias之类的属性。
+	 * 2. 当返回的 bdHolder不为空的情况下若存在默认标签的子节点下再有自定义属性， 还需要 再次对自定义标签进行解析 。
+	 * 3. 解析完成后， 需要对解析后的 bdHolder 进行注册，同样， 注册操作委托给了 BeanDefinitionReaderUtils 的 registerBeanDefinition方法。 注册到容器中
+	 * 4. 最后发出响应事件，通知相关的监昕器，这个bean已经加载完成了。
+	 * @param ele
+	 * @param delegate
+	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
+			// 当 Spring 中的 bean 使用的是默认的标签配置，但是其中的子元素却使用了 自定义的配置时
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
 				// Register the final decorated instance.

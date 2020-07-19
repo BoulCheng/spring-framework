@@ -194,6 +194,8 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	 * @see #hasAlias
 	 */
 	protected void checkForAliasCircle(String name, String alias) {
+		// 别名循环处理
+		// A 计划注册为 B 的别名，但 B 如果已经是A的别名 或者 B是A的间接别名则会抛异常( B -> C -> A )
 		if (hasAlias(alias, name)) {
 			throw new IllegalStateException("Cannot register alias '" + alias +
 					"' for name '" + name + "': Circular reference - '" +

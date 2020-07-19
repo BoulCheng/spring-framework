@@ -534,6 +534,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param beanName the name of the bean
 	 * @see #destroyBean
 	 */
+	// 销毁单例bean
 	public void destroySingleton(String beanName) {
 		// Remove a registered singleton of the given name, if any.
 		removeSingleton(beanName);
