@@ -606,6 +606,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Eagerly cache singletons to be able to resolve circular references
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
 		// 判断是否需要早期暴露bean(在bean未填充属性未初始化前暴露 可以被引用 解决循环引用)
+		//  earlySingletonExposure是否是单例、 是否允许循环依赖、 是否 对应的 bean正在创建的条件的综合
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
@@ -648,6 +649,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
 				if (exposedObject == bean) {
+					// aop代理循环引用时，exposedObject赋值为代理对象
 					exposedObject = earlySingletonReference;
 				}
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
@@ -1005,6 +1007,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
+					// aop 相关后置处理器AspectJAwareAdvisorAutoProxyCreator AbstractAutoProxyCreator 实现了 SmartInstantiationAwareBeanPostProcessor 接口，AbstractAutoProxyCreator#getEarlyBeanReference 会生成代理对象，当aop代理时，解决循环引用，其他对象引用的是代理对象，而非真实对象
 					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
 				}
 			}
