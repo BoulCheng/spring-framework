@@ -59,6 +59,20 @@ import org.springframework.beans.BeansException;
  * @see BeanPostProcessor
  * @see PropertyResourceConfigurer
  */
+
+/**
+ * Bean工厂的后置处理器
+ *
+ * 与bean定义(beanDefinition)进行交互
+ *
+ * 工厂钩子，允许自定义修改应用程序上下文的bean定义，调整上下文底层bean工厂的bean属性值。
+ *
+ * 子接口BeanDefinitionRegistryPostProcessor 可用于注册更多的bean定义(beanDefinition)
+ *
+ *
+ * BeanFactoryPostProcessor可以与bean定义交互并修改bean定义，但绝不能与bean实例交互。这样做可能会导致bean过早实例化，违反容器并导致意外的副作用
+ *
+ */
 @FunctionalInterface
 public interface BeanFactoryPostProcessor {
 

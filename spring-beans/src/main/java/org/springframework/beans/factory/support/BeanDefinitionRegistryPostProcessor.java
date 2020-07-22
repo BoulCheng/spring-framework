@@ -30,6 +30,12 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
  * @since 3.0.1
  * @see org.springframework.context.annotation.ConfigurationClassPostProcessor
  */
+
+/**
+ * Bean注册器的后置处理器
+ *
+ * 用于注册更多的bean定义(beanDefinition)
+ */
 public interface BeanDefinitionRegistryPostProcessor extends BeanFactoryPostProcessor {
 
 	/**
