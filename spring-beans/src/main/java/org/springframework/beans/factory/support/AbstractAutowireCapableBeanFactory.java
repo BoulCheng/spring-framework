@@ -1205,6 +1205,20 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #autowireConstructor
 	 * @see #instantiateBean
 	 */
+	/**
+	 * - 三种实例化
+	 * 		1. 工厂方法 factory-method
+	 * 		2. 带参数的构造
+	 * 		3. 无参数的构造
+	 * - 实例化策略
+	 * 		1. 反射
+	 * 		2. 使用了 replace 或者 lookup 的配置方法  有需要在覆盖或者动态替换的方法则当然需要使用 cglib 进行动态代理，因为可以在创建代理的同时将动态方法织入类中
+	 *
+	 * @param beanName
+	 * @param mbd
+	 * @param args
+	 * @return
+	 */
 	protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) {
 		// Make sure bean class is actually resolved at this point.
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
