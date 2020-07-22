@@ -1439,6 +1439,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param mbd the bean definition for the bean
 	 * @param bw the BeanWrapper with bean instance
 	 */
+	/**
+	 * 1. xml配置文件的属性注入 优先级最高
+	 * 2. AutowireMode 设置自动装配模式 进行自动装配(不需要xml配置文件配置 也不需要注解 只要setter方法就行)
+	 * 3. 注解方式 @Autowired @Resource 注入
+	 *
+	 * @param beanName
+	 * @param mbd
+	 * @param bw
+	 */
 	@SuppressWarnings("deprecation")  // for postProcessPropertyValues
 	protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw) {
 		if (bw == null) {
@@ -1468,10 +1477,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 		//2.添加基于自动装配的属性值 Add property values based on autowire
-		PropertyValues pvs = (mbd.hasPropertyValues() ? mbd.getPropertyValues() : null);
+		PropertyValues pvs = (mbd.hasPropertyValues() ? mbd.getPropertyValues() : null); // pvs 是xml配置文件中配置的属性值
 
+		/**
+		 * 可以通过BeanFactoryPostProcessor自定义自动装配模式  在bean提供setter方法就可以自动属性注入，而不需要注解@Autowired @Resource
+		 */
 		int resolvedAutowireMode = mbd.getResolvedAutowireMode();
-		if (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) {
+		if (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) { // 自定义的自动装配模式 默认AutowireCapableBeanFactory.AUTOWIRE_NO装配模式
 			MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
 			// Add property values based on autowire by name if applicable.
 			if (resolvedAutowireMode == AUTOWIRE_BY_NAME) {
@@ -1496,7 +1508,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 					/**
+					 * 此处完成通过@Autowired 为bean注入属性依赖的bean实例引用，Field反射设置属性值
 					 * @see AutowiredAnnotationBeanPostProcessor#postProcessProperties(PropertyValues, Object, String)
+					 */
+					/**
+					 *
+					 * 此处完成通过@Resource 为bean注入属性依赖的bean实例引用，Field反射设置属性值
+					 * @see CommonAnnotationBeanPostProcessor#postProcessProperties(PropertyValues, Object, String)
+					 */
+					/**
+					 * @Autowired  @Resource  的处理默认情况下都不会改变 pvs， 最终仍然会通过applyPropertyValues应用xml配置文件里的配置属性值
 					 */
 					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
 					if (pvsToUse == null) {
@@ -1521,6 +1542,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (pvs != null) {
+			// 应用xml配置文件中配置的属性值
 			applyPropertyValues(beanName, mbd, bw, pvs);
 		}
 	}
@@ -1623,6 +1645,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		PropertyValues pvs = mbd.getPropertyValues();
 		PropertyDescriptor[] pds = bw.getPropertyDescriptors();
 		for (PropertyDescriptor pd : pds) {
+			// !pvs.contains(pd.getName()) 判断xml中没有配置了属性注入，如果xml配置文件已经配置了则不进行自动装配模式注入
 			if (pd.getWriteMethod() != null && !isExcludedFromDependencyCheck(pd) && !pvs.contains(pd.getName()) &&
 					!BeanUtils.isSimpleProperty(pd.getPropertyType())) {
 				result.add(pd.getName());

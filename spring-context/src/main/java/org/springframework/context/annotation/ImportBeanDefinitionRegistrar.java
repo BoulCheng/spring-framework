@@ -58,6 +58,20 @@ import org.springframework.core.type.AnnotationMetadata;
  * @see ImportSelector
  * @see Configuration
  */
+
+/**
+ * 动态注入Bean定义(beanDefinition)
+ *
+ * Spring官方通过ImportBeanDefinitionRegistrar实现了@Component、@Service等注解的动态注入机制。
+ * 很多三方框架集成Spring的时候，都会通过该接口，实现扫描指定的类，然后注册到spring容器中。 比如Mybatis中的Mapper接口，springCloud中的FeignClient接口，都是通过该接口实现的自定义注册逻辑。
+ *
+ *
+ * 基本步骤：
+ * 实现ImportBeanDefinitionRegistrar接口；
+ * 通过registerBeanDefinitions实现具体如何注册beanDefinition；
+ * 在@Configuration注解的配置类上使用@Import导入实现类；
+ *
+ */
 public interface ImportBeanDefinitionRegistrar {
 
 	/**

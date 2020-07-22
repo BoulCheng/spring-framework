@@ -683,6 +683,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 			if (value != null) {
 				ReflectionUtils.makeAccessible(field);
 				// 依赖注入 设置属性值
+				// @Autowired 为bean注入属性依赖的bean实例引用
 				field.set(bean, value);
 			}
 		}
