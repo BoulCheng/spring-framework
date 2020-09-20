@@ -140,6 +140,11 @@ public class DefaultResourceLoader implements ResourceLoader {
 	}
 
 
+	/**
+	 * //ClassPathXmlApplicationContext将配置文件封装为Resource类型实例
+	 * @param location the resource location
+	 * @return
+	 */
 	@Override
 	public Resource getResource(String location) {
 		Assert.notNull(location, "Location must not be null");
@@ -165,6 +170,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 			}
 			catch (MalformedURLException ex) {
 				// No URL -> resolve as resource path.
+				// 非url资源加载
 				return getResourceByPath(location);
 			}
 		}
@@ -186,6 +192,10 @@ public class DefaultResourceLoader implements ResourceLoader {
 	}
 
 
+	/**
+	 * 继承了  ClassPathResource
+	 * 与 XmlBeanFactory xmlBeanFactory = new XmlBeanFactory(new ClassPathResource("beans.xml")); 殊途同归
+	 */
 	/**
 	 * ClassPathResource that explicitly expresses a context-relative path
 	 * through implementing the ContextResource interface.

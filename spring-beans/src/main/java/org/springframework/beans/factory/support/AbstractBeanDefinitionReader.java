@@ -81,7 +81,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	 * @see #setResourceLoader
 	 * @see #setEnvironment
 	 */
-	protected AbstractBeanDefinitionReader(BeanDefinitionRegistry registry) {
+	protected AbstractBeanDefinitionReader(BeanDefinitionRegistry registry) { //DefaultListableBeanFactory
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 		this.registry = registry;
 
@@ -90,6 +90,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 			this.resourceLoader = (ResourceLoader) this.registry;
 		}
 		else {
+			// 设置为 PathMatchingResourcePatternResolver
 			this.resourceLoader = new PathMatchingResourcePatternResolver();
 		}
 
@@ -98,6 +99,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 			this.environment = ((EnvironmentCapable) this.registry).getEnvironment();
 		}
 		else {
+			// 设置为 StandardEnvironment
 			this.environment = new StandardEnvironment();
 		}
 	}
@@ -220,7 +222,10 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		if (resourceLoader instanceof ResourcePatternResolver) {
 			// Resource pattern matching available.
 			try {
+				//ClassPathXmlApplicationContext将配置文件封装为Resource类型实例
+				//由DefaultResourceLoader 返回 ClassPathContextResource extends ClassPathResource
 				Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
+				//读取配置文件 加载BeanDefinition
 				int count = loadBeanDefinitions(resources);
 				if (actualResources != null) {
 					Collections.addAll(actualResources, resources);

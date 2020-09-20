@@ -63,6 +63,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @see org.springframework.util.ClassUtils#getDefaultClassLoader()
 	 */
 	public ClassPathResource(String path) {
+		// 设置文件路径
 		this(path, (ClassLoader) null);
 	}
 
@@ -166,6 +167,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 */
 	@Override
 	public InputStream getInputStream() throws IOException {
+		// 加载资源文件xml
 		InputStream is;
 		if (this.clazz != null) {
 			is = this.clazz.getResourceAsStream(this.path);
