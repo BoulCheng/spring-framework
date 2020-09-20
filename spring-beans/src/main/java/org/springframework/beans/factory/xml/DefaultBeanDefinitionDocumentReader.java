@@ -195,6 +195,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	}
 
 	/**
+	 * 默认标签解析
 	 * 分别对4种不同标签(import、 alias、 bean、beans)做了不同的处理。
 	 * @param ele
 	 * @param delegate

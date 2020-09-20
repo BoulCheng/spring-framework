@@ -1392,6 +1392,10 @@ public class BeanDefinitionParserDelegate {
 	}
 
 	/**
+	 *
+	 * 自定义标签解析
+	 */
+	/**
 	 * Parse a custom element (outside of the default namespace).
 	 * @param ele the element to parse
 	 * @return the resulting bean definition
@@ -1549,6 +1553,10 @@ public class BeanDefinitionParserDelegate {
 		return desiredName.equals(node.getNodeName()) || desiredName.equals(getLocalName(node));
 	}
 
+	/**
+	 * 如果节点Node 名称空间为 http://www.springframework.org/schema/beans 则 是默认名称空间 采用默认标签解析
+	 * 否则 是用户自定义命名空间 采用自定义标签解析
+	 */
 	/**
 	 * Determine whether the given URI indicates the default namespace.
 	 */
