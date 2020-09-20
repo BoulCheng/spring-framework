@@ -255,6 +255,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	}
 
 	/**
+	 * XSD 名称空间对应的 XML Schema文件位置或url地址
+	 * 默认情况sax解析验证时 该xml验证文件-XML Schema文件是从网上下载的
+	 * 但SAX通过EntityResolver提供了一种方式来从项目本地寻找该验证文件
+	 */
+	/**
 	 * Return the EntityResolver to use, building a default resolver
 	 * if none specified.
 	 */
@@ -335,6 +340,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		////读取配置文件 加载BeanDefinition
 		// 读取配置文件
 		try (InputStream inputStream = encodedResource.getResource().getInputStream()) {
+			//sax解析
 			InputSource inputSource = new InputSource(inputStream);
 			if (encodedResource.getEncoding() != null) {
 				inputSource.setEncoding(encodedResource.getEncoding());
@@ -460,6 +466,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 				getValidationModeForResource(resource), isNamespaceAware());
 	}
 
+	/**
+	 * 获取对应资源的验证模式 DTD XSD
+	 */
 	/**
 	 * Determine the validation mode for the specified {@link Resource}.
 	 * If no explicit validation mode has been configured, then the validation

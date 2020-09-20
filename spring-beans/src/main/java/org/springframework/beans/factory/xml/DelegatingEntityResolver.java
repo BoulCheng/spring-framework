@@ -77,6 +77,14 @@ public class DelegatingEntityResolver implements EntityResolver {
 	}
 
 
+	/**
+	 * XSD systemId 为 xml中名称空间对应的 xml schema文件的url
+	 * @param publicId
+	 * @param systemId
+	 * @return 返回值给 SAX 验证xml用
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	@Override
 	@Nullable
 	public InputSource resolveEntity(@Nullable String publicId, @Nullable String systemId)
@@ -87,6 +95,8 @@ public class DelegatingEntityResolver implements EntityResolver {
 				return this.dtdResolver.resolveEntity(publicId, systemId);
 			}
 			else if (systemId.endsWith(XSD_SUFFIX)) {
+				// 从 META-INF/spring.schemas 文件找到  xml schema文件的url (配置的)对应的 项目本地的文件路径并加载
+				//以避免从网络通过该url下载该 xml schema文件
 				return this.schemaResolver.resolveEntity(publicId, systemId);
 			}
 		}

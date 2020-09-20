@@ -81,6 +81,9 @@ public class XmlValidationModeDetector {
 
 
 	/**
+	 * 判断是否包含 DOCTYPE 包含则DTD 否则XSD
+	 */
+	/**
 	 * Detect the validation mode for the XML document in the supplied {@link InputStream}.
 	 * Note that the supplied {@link InputStream} is closed by this method before returning.
 	 * @param inputStream the InputStream to parse

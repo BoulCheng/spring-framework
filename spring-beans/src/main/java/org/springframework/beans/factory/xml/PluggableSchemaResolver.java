@@ -61,6 +61,9 @@ public class PluggableSchemaResolver implements EntityResolver {
 	 * The location of the file that defines schema mappings.
 	 * Can be present in multiple JAR files.
 	 */
+	/**
+	 * 本地 xml schema文件 位置  在META-INF/spring.schemas中配置 key为xml schema文件的网络下载url
+	 */
 	public static final String DEFAULT_SCHEMA_MAPPINGS_LOCATION = "META-INF/spring.schemas";
 
 
