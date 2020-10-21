@@ -77,6 +77,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	 * or the EJB3 {@link javax.ejb.TransactionAttribute} annotation.
 	 */
 	public AnnotationTransactionAttributeSource() {
+		// 默认 - @Trasactional 注解的 public 方法事务才生效
 		this(true);
 	}
 
@@ -171,6 +172,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	 */
 	@Nullable
 	protected TransactionAttribute determineTransactionAttribute(AnnotatedElement element) {
+		//SpringTransactionAnnotationParser
 		for (TransactionAnnotationParser parser : this.annotationParsers) {
 			TransactionAttribute attr = parser.parseTransactionAnnotation(element);
 			if (attr != null) {

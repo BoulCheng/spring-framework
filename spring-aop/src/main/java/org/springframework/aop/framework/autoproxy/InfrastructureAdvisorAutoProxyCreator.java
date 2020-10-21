@@ -27,6 +27,10 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @since 2.0.7
  */
+
+/**
+ * 事务 <tx:annotation-driven /> spring aop
+ */
 @SuppressWarnings("serial")
 public class InfrastructureAdvisorAutoProxyCreator extends AbstractAdvisorAutoProxyCreator {
 

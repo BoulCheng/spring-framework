@@ -31,6 +31,10 @@ import org.springframework.lang.Nullable;
  * @see TransactionInterceptor
  * @see TransactionAttributeSourceAdvisor
  */
+
+/**
+ * 事务 advisor
+ */
 @SuppressWarnings("serial")
 public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFactoryPointcutAdvisor {
 

@@ -105,7 +105,12 @@ public class TransactionInterceptor extends TransactionAspectSupport implements 
 		setTransactionAttributes(attributes);
 	}
 
-
+	/**
+	 * 在 TransactionInterceptor类中的 invoke方法中完 成了整个事务的逻辑。
+	 * @param invocation
+	 * @return
+	 * @throws Throwable
+	 */
 	@Override
 	@Nullable
 	public Object invoke(MethodInvocation invocation) throws Throwable {
