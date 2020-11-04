@@ -77,7 +77,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	 * or the EJB3 {@link javax.ejb.TransactionAttribute} annotation.
 	 */
 	public AnnotationTransactionAttributeSource() {
-		// 默认 - @Trasactional 注解的 public 方法事务才生效
+		// 默认 - @Transactional 注解的 public 方法事务才生效 //
 		this(true);
 	}
 

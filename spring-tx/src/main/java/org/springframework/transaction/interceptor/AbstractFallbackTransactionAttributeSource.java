@@ -150,7 +150,13 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 	@Nullable
 	protected TransactionAttribute computeTransactionAttribute(Method method, @Nullable Class<?> targetClass) {
 		// Don't allow no-public methods as required.
+		// 默认 - @Transaction 注解的 public 方法事务才生效
 		if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
+			// 是否是public方法判断
+
+			// 2.自调用问题
+			// spring依赖注入时注入的是代理了真实对象的代理对象，因此调用该依赖对象(即代理对象)的方法时会执行额外的切面逻辑然后再调用真实对象目标方法；
+			// 而自调用方法时调用对象是原真实对象，非事务方法自调用事务方法场景下，非事务方法的调用对象是代理对象，事务方法的调用对象是原真实对象并不是代理对象所以事务方法并没有事务支持，
 			return null;
 		}
 
