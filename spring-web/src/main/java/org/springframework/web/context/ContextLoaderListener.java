@@ -96,6 +96,11 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
 
 
 	/**
+	 * 容器启动时执行
+	 * 每一个Web应用者附一个ServletContext与之相关联。 ServletContext对象在应用启动时被创建，在应用关闭的时候被销毁
+	 * 在 ServletContextListener 中的核心逻辑便是初始化 WebApplicationContext 实例并存放至 ServletContext 中
+	 */
+	/**
 	 * Initialize the root web application context.
 	 */
 	@Override

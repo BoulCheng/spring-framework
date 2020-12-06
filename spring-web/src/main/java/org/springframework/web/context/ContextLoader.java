@@ -276,6 +276,7 @@ public class ContextLoader {
 			// Store context in local instance variable, to guarantee that
 			// it is available on ServletContext shutdown.
 			if (this.context == null) {
+				//初始化 WebApplicationContext 实例
 				this.context = createWebApplicationContext(servletContext);
 			}
 			if (this.context instanceof ConfigurableWebApplicationContext) {
@@ -292,6 +293,7 @@ public class ContextLoader {
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
+			//将WebApplicationContext实例并存放至 ServletContext 中
 			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
 
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -357,6 +359,7 @@ public class ContextLoader {
 			}
 		}
 		else {
+			//首先会读取 ContextLoader 类的同目录下的属性文件 ContextLoader.properties，并根据其中的配置提取将要实现 WebApplicationContext 接口的实现类，并根据这个实现类通过反射的方式进行实例的创建。
 			contextClassName = defaultStrategies.getProperty(WebApplicationContext.class.getName());
 			try {
 				return ClassUtils.forName(contextClassName, ContextLoader.class.getClassLoader());
