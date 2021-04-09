@@ -1922,6 +1922,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
 			//3. 在初始化之后执行的bean后置处理器
+			// aop在bean初始化完成后切入， 生成代理对象代理原生bean
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 

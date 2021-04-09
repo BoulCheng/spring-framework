@@ -29,7 +29,10 @@ import org.springframework.lang.Nullable;
  */
 
 /**
- * 事务 <tx:annotation-driven /> spring aop
+ * 基础的spring aop代理创建类
+ *
+ * 1 事务 <tx:annotation-driven />
+ * 2 面向切面编程
  */
 @SuppressWarnings("serial")
 public class InfrastructureAdvisorAutoProxyCreator extends AbstractAdvisorAutoProxyCreator {

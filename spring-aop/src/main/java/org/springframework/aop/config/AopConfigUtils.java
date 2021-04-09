@@ -56,11 +56,21 @@ public abstract class AopConfigUtils {
 	 */
 	private static final List<Class<?>> APC_PRIORITY_LIST = new ArrayList<>(3);
 
+	/**
+	 * 3个AOP相关的BeanPostProcessor
+	 * 容器中只会注册以下三个中的一个 且无论注册哪个beanName 都是 AUTO_PROXY_CREATOR_BEAN_NAME
+	 * 当重复注册 AOP相关的BeanPostProcessor 会注册优先级最高的那个 APC_PRIORITY_LIST数组索引越大优先级越高
+	 *
+	 * 当应用使用了切面，那容器中一定是 AnnotationAwareAspectJAutoProxyCreator
+	 *
+	 * @see BeanPostProcessor#postProcessAfterInitialization
+	 * aop在bean初始化完成后切入， 生成代理对象代理原生bean
+	 */
 	static {
 		// Set up the escalation list...
-		APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class);
-		APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class);
-		APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class);
+		APC_PRIORITY_LIST.add(InfrastructureAdvisorAutoProxyCreator.class); //事务
+		APC_PRIORITY_LIST.add(AspectJAwareAdvisorAutoProxyCreator.class); //切面
+		APC_PRIORITY_LIST.add(AnnotationAwareAspectJAutoProxyCreator.class); //注解切面
 	}
 
 
@@ -69,6 +79,12 @@ public abstract class AopConfigUtils {
 		return registerAutoProxyCreatorIfNecessary(registry, null);
 	}
 
+	/**
+	 *
+	 * @param registry
+	 * @param source
+	 * @return
+	 */
 	@Nullable
 	public static BeanDefinition registerAutoProxyCreatorIfNecessary(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
@@ -81,6 +97,12 @@ public abstract class AopConfigUtils {
 		return registerAspectJAutoProxyCreatorIfNecessary(registry, null);
 	}
 
+	/**
+	 *
+	 * @param registry
+	 * @param source
+	 * @return
+	 */
 	@Nullable
 	public static BeanDefinition registerAspectJAutoProxyCreatorIfNecessary(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
@@ -93,6 +115,12 @@ public abstract class AopConfigUtils {
 		return registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry, null);
 	}
 
+	/**
+	 *
+	 * @param registry
+	 * @param source
+	 * @return
+	 */
 	@Nullable
 	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
@@ -114,6 +142,15 @@ public abstract class AopConfigUtils {
 		}
 	}
 
+	/**
+	 * 当重复注册 AOP相关的BeanPostProcessor 会注册优先级最高的那个 APC_PRIORITY_LIST数组索引越大优先级越高
+	 * 当应用使用了切面，那容器中一定是 AnnotationAwareAspectJAutoProxyCreator
+	 *
+	 * @param cls
+	 * @param registry
+	 * @param source
+	 * @return
+	 */
 	@Nullable
 	private static BeanDefinition registerOrEscalateApcAsRequired(
 			Class<?> cls, BeanDefinitionRegistry registry, @Nullable Object source) {
@@ -126,6 +163,7 @@ public abstract class AopConfigUtils {
 				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
 				int requiredPriority = findPriorityForClass(cls);
 				if (currentPriority < requiredPriority) {
+					// 注册优先级高的 AOP相关的BeanPostProcessor
 					apcDefinition.setBeanClassName(cls.getName());
 				}
 			}
