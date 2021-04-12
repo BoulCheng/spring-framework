@@ -515,12 +515,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
+			// 容器刷新前预处理
 			// Prepare this context for refreshing.
 			prepareRefresh();
 
+			// 获取beanFactory( DefaultListableBeanFactory)
 			// Tell the subclass to refresh the internal bean factory.
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
+			/**
+			 * 预处理beanFactory
+			 * BeanPostProcessor(BeanDefinition)
+			 * 		ApplicationContextAwareProcessor(如可以为bean注入 applicationContext)
+			 */
 			// Prepare the bean factory for use in this context.
 			prepareBeanFactory(beanFactory);
 
@@ -530,7 +537,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Invoke factory processors registered as beans in the context. 调用上下文中注册为bean的工厂处理器。
 				/**
+				 * 执行 BeanFactoryPostProcessor
+				 * 		1 获取 BeanFactoryPostProcessor 的 BeanDefinition 并实例化
+				 * 		2 调用 BeanFactoryPostProcessor 类型实例的相应方法
 				 *
+				 *
+				 * 如
 				 * 1.扫描配置的包路径，把直接或间接被org.springframework.stereotype.Component  javax.annotation.ManagedBean  javax.inject.Named 这三个注解任意一个注解注解的class 以ScannedGenericBeanDefinition注册到容器中， in{@link ClassPathBeanDefinitionScanner#doScan(String...)}
 				 * 2.处理 @Bean 注解的方法，并生成ConfigurationClassBeanDefinitionReader.ConfigurationClassBeanDefinition注册到bean容器中, in{@link ConfigurationClassBeanDefinitionReader#loadBeanDefinitionsForBeanMethod(BeanMethod)}
 				 */
@@ -538,6 +550,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Register bean processors that intercept bean creation.
 				/**
+				 * 注册BeanPostProcessor类型的bean(实例对象)到 beanFactory
+				 *
 				 * 实例化BeanPostProcessor接口实现类, AnnotationAwareOrderComparator 排序后，并把实例注册(保存)到容器中(通过AbstractBeanFactory#addBeanPostProcessor(BeanPostProcessor))
 				 * 两个排序相关的接口：PriorityOrdered、Ordered
 				 * PriorityOrdered 优先级高于 Ordered
@@ -555,6 +569,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Initialize event multicaster for this context.
 				initApplicationEventMulticaster();
 
+				// 子类实现 如ServletWebServerApplicationContext 创建web服务器
 				// Initialize other special beans in specific context subclasses.
 				onRefresh();
 
@@ -563,11 +578,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Instantiate all remaining (non-lazy-init) singletons.
 				/**
+				 * 自动注册单例bean(对象)到容器
 				 * 实例所有剩余非懒加载的单例Bean
 				 */
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+
+				/**
+				 * 发布容器刷新完事件
+				 *  	如dubbo 服务导出 触发入口 ApplicationListener#onApplicationEvent
+				 *
+				 * web场景下会重写该方法以启动web服务器
+				 */
 				finishRefresh();
 			}
 

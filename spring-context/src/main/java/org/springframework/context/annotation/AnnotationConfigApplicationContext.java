@@ -59,6 +59,24 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 
 
 	/**
+	 * 创建容器
+	 *     - AnnotationConfigApplicationContext
+	 *         - 父类 GenericApplicationContext
+	 *             - 实例化 DefaultListableBeanFactory 对象
+	 *         - AnnotatedBeanDefinitionReader (注解处理)
+	 *             - BeanFactoryPostProcessor
+	 *                 - ConfigurationClassPostProcessor
+	 *                     - beanFactory 后置处理器，用来完成 bean 的扫描与BeanDefinition注入工作
+	 *                     - 如springboot自动配置会用到
+	 *             - BeanPostProcessor
+	 *                 - AutowiredAnnotationBeanPostProcessor
+	 *                     - @Autowired注解 依赖注入
+	 *                     - bean 后置处理器，用来完成 @AutoWired 自动注入
+	 *         - ClassPathBeanDefinitionScanner (扫描包处理)
+	 *             - ClassPathMapperScanner extends ClassPathBeanDefinitionScanner
+	 *                 - 如Mybatis 处理 @Mapper注解
+	 */
+	/**
 	 * when - springboot 启动过时会实例化这个spring上下文
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
