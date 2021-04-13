@@ -78,6 +78,9 @@ public abstract class TransactionSynchronizationManager {
 
 	private static final Log logger = LogFactory.getLog(TransactionSynchronizationManager.class);
 
+	/**
+	 *  DataSourceTransactionManager管理线程之间的Connection，ThreadLocal 中存储一个Map，key为数据源对象，value为该数据源在当前线程的Connection(ConnectionHolder)
+	 */
 	private static final ThreadLocal<Map<Object, Object>> resources =
 			new NamedThreadLocal<>("Transactional resources");
 
@@ -128,6 +131,9 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * DataSourceTransactionManager管理线程之间的Connection，ThreadLocal 中存储一个Map，key为数据源对象，value为该数据源在当前线程的Connection
+	 */
+	/**
 	 * Retrieve a resource for the given key that is bound to the current thread.
 	 * @param key the key to check (usually the resource factory)
 	 * @return a value bound to the current thread (usually the active
@@ -168,6 +174,9 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * DataSourceTransactionManager 在开启事务后，会调用TransactionSynchronizationManager::bindResource将指定数据源的Connection绑定到当前线程
+	 */
+	/**
 	 * Bind the given resource for the given key to the current thread.
 	 * @param key the key to bind the value to (usually the resource factory)
 	 * @param value the value to bind (usually the active resource object)
@@ -198,6 +207,12 @@ public abstract class TransactionSynchronizationManager {
 		}
 	}
 
+	/**
+	 *
+	 * 挂起事务：通过TransactionSynchronizationManager::unbindResource 根据数据源获取当前的Connection，并在resource中移除该Connection。之后会将该Connection存储到TransactionStatus对象中
+	 * @see DataSourceTransactionManager#doSuspend
+	 * 在事务提交或者回滚后，调用 AbstractPlatformTransactionManager::cleanupAfterCompletion会将TransactionStatus 中挂起的资源(Connection)重新绑定到resource中
+	 */
 	/**
 	 * Unbind a resource for the given key from the current thread.
 	 * @param key the key to unbind (usually the resource factory)

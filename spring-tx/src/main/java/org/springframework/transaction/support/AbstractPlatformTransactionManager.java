@@ -344,19 +344,25 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		// Use defaults if no transaction definition given.
 		TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());
 
+		// 会获取当前线程(ThreadLocalMap本地变量 TransactionSynchronizationManager#resources(ThreadLocal)为key的value(此处是map)中)绑定的 当前事务管理器中数据源对应的数据库连接，放入该transaction
 		Object transaction = doGetTransaction();
 		boolean debugEnabled = logger.isDebugEnabled();
+
+		//1判断当前线程是否存在事务
+		// 即判断当前线程(ThreadLocalMap本地变量 TransactionSynchronizationManager#resources(ThreadLocal)为key的value(此处是map)中)是否绑定了 当前事务管理器中数据源对应的数据库连接
 
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
 			return handleExistingTransaction(def, transaction, debugEnabled);
 		}
 
+		// 事务超时设置验证
 		// Check definition settings for new transaction.
 		if (def.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
 			throw new InvalidTimeoutException("Invalid transaction timeout", def.getTimeout());
 		}
 
+		//事务隔离级别属性的设置验证
 		// No existing transaction found -> check propagation behavior to find out how to proceed.
 		if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
 			throw new IllegalTransactionStateException(
@@ -370,6 +376,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				logger.debug("Creating new transaction with name [" + def.getName() + "]: " + def);
 			}
 			try {
+				//新建事务
 				return startTransaction(def, transaction, debugEnabled, suspendedResources);
 			}
 			catch (RuntimeException | Error ex) {
@@ -395,9 +402,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			boolean debugEnabled, @Nullable SuspendedResourcesHolder suspendedResources) {
 
 		boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
+		// 构建 DefaultTransactionStatus。
 		DefaultTransactionStatus status = newTransactionStatus(
 				definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
+		//完善 transaction 及 设置数据库物理连接属性
 		doBegin(transaction, definition);
+		//新连接 绑定到当前线程
 		prepareSynchronization(status, definition);
 		return status;
 	}
@@ -424,11 +434,16 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 					definition, null, false, newSynchronization, debugEnabled, suspendedResources);
 		}
 
+		// 无论当前存不存在事务，都创建新事务进行执行
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW) {
 			if (debugEnabled) {
 				logger.debug("Suspending current transaction, creating new transaction with name [" +
 						definition.getName() + "]");
 			}
+			//挂起当前事务 新建事务
+			// 所谓的挂起本质是指 不使用当前线程(ThreadLocalMap本地变量 TransactionSynchronizationManager#resources(ThreadLocal)为key的value(此处是map)中)中绑定的 当前事务管理器中数据源对应的数据库连接，而新获取数据库连接使用，
+			// 先解绑线程该连接缓存着(TransactionSynchronizationManager#unbindResource)，使用完新获取的数据库连接，再把原来的该线程绑定的连接重新绑定上(TransactionSynchronizationManager#bindResource )
+
 			SuspendedResourcesHolder suspendedResources = suspend(transaction);
 			try {
 				return startTransaction(definition, transaction, debugEnabled, suspendedResources);
@@ -465,6 +480,8 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 		}
 
+		// PROPAGATION_REQUIRED：（默认传播行为）如果当前没有事务，就创建一个新事务；如果当前存在事务，就加入该事务
+		// 会使用当前线程(ThreadLocalMap本地变量 TransactionSynchronizationManager#resources(ThreadLocal)为key的value(此处是map)中)中绑定的 当前事务管理器中数据源对应的数据库连接
 		// Assumably PROPAGATION_SUPPORTS or PROPAGATION_REQUIRED.
 		if (debugEnabled) {
 			logger.debug("Participating in existing transaction");
@@ -1008,6 +1025,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				logger.debug("Resuming suspended transaction after completion of inner transaction");
 			}
 			Object transaction = (status.hasTransaction() ? status.getTransaction() : null);
+			// 将TransactionStatus 中保存的挂起资源(Connection)重新绑定到resource中
 			resume(transaction, (SuspendedResourcesHolder) status.getSuspendedResources());
 		}
 	}
