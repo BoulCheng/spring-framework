@@ -77,7 +77,16 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 	/** Cache of singleton factories: bean name to ObjectFactory. */
 	// 单例bean 三级缓存
-	// 工厂对象缓存 用于解决aop代理对象循环引用问题, 解决循环引用时 A -> B -> A ， B在属性设置时引用A的代理对象，而非真实对象；三级缓存是为了解决aop下的循环引用
+	// 工厂对象缓存 用于解决(aop)代理对象循环引用问题, 解决循环引用时 A -> B -> A ， B在属性设置时引用A的代理对象，而非真实对象；三级缓存是为了解决(aop)代理下的循环引用
+	// 在bean设置属性和初始化的过程中可能会被其他bean引用，此时被引用的过程会触发代理对象的创建，没有发生循环引用时代理对象在bean初始化完成后生成
+	/**
+	 * 三级缓存的根本原因:
+	 * 本质上采用二级缓存也完全可以解决单纯的代理问题 bean实例化后直接创建代理放入二级缓存即可，不管有没有循环依赖，都提前创建好代理对象，并将代理对象放入缓存，出现循环依赖时，其他对象直接就可以取到代理对象并注入。
+	 *
+	 * 采用三级缓存更多是设计上的考虑
+	 * 		不提前创建好代理对象，在出现循环依赖被其他对象注入时，才实时生成代理对象。这样在没有循环依赖的情况下，Bean就可以按着Spring设计原则的步骤来创建
+	 * 如果要使用二级缓存解决循环依赖，意味着Bean在构造完后就创建代理对象，这样违背了Spring设计原则。Spring结合AOP和Bean的生命周期，是在Bean创建完全之后通过AnnotationAwareAspectJAutoProxyCreator这个后置处理器来完成的，在这个后置处理的postProcessAfterInitialization方法中对初始化后的Bean完成AOP代理。如果出现了循环依赖，那没有办法，只有给Bean先创建代理，但是没有出现循环依赖的情况下，设计之初就是让Bean在生命周期的最后一步完成代理而不是在实例化后就立马完成代理
+ 	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/** Cache of early singleton objects: bean name to bean instance. */
@@ -185,11 +194,15 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		Object singletonObject = this.singletonObjects.get(beanName);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			// bean在创建中
 			synchronized (this.singletonObjects) {
+
+				// synchronized 保证AbstractAutowireCapableBeanFactory#getEarlyBeanReference被不被重复调用 避免代理对象被重复创建
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
+						// 实际执行 AbstractAutowireCapableBeanFactory#getEarlyBeanReference -> AbstractAutoProxyCreator#getEarlyBeanReference
 						singletonObject = singletonFactory.getObject();
 						this.earlySingletonObjects.put(beanName, singletonObject);
 						this.singletonFactories.remove(beanName);
@@ -253,6 +266,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					}
 					afterSingletonCreation(beanName);
 				}
+
+				//放入一级缓存
 				if (newSingleton) {
 					addSingleton(beanName, singletonObject);
 				}

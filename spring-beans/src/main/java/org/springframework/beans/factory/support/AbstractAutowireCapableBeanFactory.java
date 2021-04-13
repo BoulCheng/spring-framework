@@ -646,13 +646,21 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (earlySingletonExposure) {
+			//如果发生了循环引用，由于其他bean会引用beanName代表的bean，所以beanName代表的bean会从三级缓存放入到二级缓存，所以此处返回不为null
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
+				/**
+				 * 如果是由于事务生成代理，那么由于在三级缓存 singletonFactory({@link SmartInstantiationAwareBeanPostProcessor#getEarlyBeanReference(Object, String)})已经生成过代理，因此在{@link BeanPostProcessor#postProcessAfterInitialization(Object, String)}不会再次执行生成代理，exposedObject == bean为true
+				 * 如果是由于 {@link Async @Async}生成代理，在三级缓存 singletonFactory({@link SmartInstantiationAwareBeanPostProcessor#getEarlyBeanReference(Object, String)})不会生成过代理，而是在{@link BeanPostProcessor#postProcessAfterInitialization(Object, String)}执行生成代理，exposedObject(代理) == bean为false
+				 */
 				if (exposedObject == bean) {
 					// aop代理循环引用时，exposedObject赋值为代理对象
 					exposedObject = earlySingletonReference;
 				}
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
+					// 发生循环引用错误
+
+					// aop代理下， 当 initializeBean 调用完后 且该if块内getSingleton调用之前，有某个bean设置属性时依赖与当前bean 那么会调用 getSingleton(beanName, true); 生成代理对象。与当前bean(实际时代理对象)不是同一个引用；这种情况并不会发生 因为AbstractAutoProxyCreator不会重复创建代理。
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
 					for (String dependentBean : dependentBeans) {
