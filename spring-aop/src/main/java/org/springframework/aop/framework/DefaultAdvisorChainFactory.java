@@ -90,12 +90,23 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 					if (match) {
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 						if (mm.isRuntime()) {
+
+							/**
+							 * 切面
+							 * Advisor -> InstantiationModelAwarePointcutAdvisorImpl
+							 * Advice MethodInterceptor -> 如 AspectJAroundAdvice
+							 */
 							// Creating a new object instance in the getInterceptors() method
 							// isn't a problem as we normally cache created chains.
 							for (MethodInterceptor interceptor : interceptors) {
 								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm));
 							}
 						} else {
+							/**
+							 * tx 事务
+							 * Advisor -> BeanFactoryTransactionAttributeSourceAdvisor
+							 * Advice MethodInterceptor -> TransactionInterceptor
+							 */
 							interceptorList.addAll(Arrays.asList(interceptors));
 						}
 					}

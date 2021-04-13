@@ -101,8 +101,16 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 		}
 	}
 
+	/**
+	 *
+	 * this 实现类 BeanFactoryTransactionAttributeSourceAdvisor
+	 * this.advice 是为BeanFactoryTransactionAttributeSourceAdvisor类型对象注入的 TransactionInterceptor 类型对象
+	 * springboot 通过@EnableTransactionManagement注解触发
+	 * @return
+	 */
 	@Override
 	public Advice getAdvice() {
+		// 获取 Advice
 		Advice advice = this.advice;
 		if (advice != null) {
 			return advice;
@@ -114,6 +122,7 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 		if (this.beanFactory.isSingleton(this.adviceBeanName)) {
 			// Rely on singleton semantics provided by the factory.
 			advice = this.beanFactory.getBean(this.adviceBeanName, Advice.class);
+			// TransactionInterceptor
 			this.advice = advice;
 			return advice;
 		}

@@ -91,9 +91,11 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 * @see #extendAdvisors
 	 */
 	protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
-		// 先获取所有被@Aspect注解的类的所有被 任意一个Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class解决的方法生成的所有候选Advisor列表
+		// aop: 先获取所有被@Aspect注解的类的所有被 任意一个Around.class, Before.class, After.class, AfterReturning.class, AfterThrowing.class注解的方法生成的所有候选Advisor列表
+		// 1 寻找容器中候选增强器 Advisor 类型的Bean
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
 		// 获取可以能匹配该类的任意方法的Advisor(pointcut)  ( 判断是否匹配类 判断该类是否有任意方法匹配)
+		// 2 从候选增强器中寻找到该bean匹配的项 (如 tx:找出某个增强器是否适合于对应的类，而是否匹配的关键则在于是否从指定的类或类中的方法中找到对应的事务属性(事务注解); 事务对应的增强器是 BeanFactoryTransactionAttributeSourceAdvisor)
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
 		extendAdvisors(eligibleAdvisors);
 		if (!eligibleAdvisors.isEmpty()) {
@@ -108,6 +110,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 */
 	protected List<Advisor> findCandidateAdvisors() {
 		Assert.state(this.advisorRetrievalHelper != null, "No BeanFactoryAdvisorRetrievalHelper available");
+		// 获取所有对应 Advisor.class 的类 如事务相关的 BeanFactoryTransactionAttributeSourceAdvisor
 		return this.advisorRetrievalHelper.findAdvisorBeans();
 	}
 

@@ -292,7 +292,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @see #getAdvicesAndAdvisorsForBean
 	 */
 	/**
+	 *
+	 * bean的代理在bean初始化后置处理方法生成
 	 * 在bean初始化(initializeBean)时初始化的最后一步应用后置处理器BeanPostProcessor#postProcessAfterInitialization(aop对应是 AnnotationAwareAspectJAutoProxyCreator 是AbstractAutoProxyCreator的子类)创建代理类
+	 *
+	 * 单纯事务的 - InfrastructureAdvisorAutoProxyCreator
 	 * @param bean
 	 * @param beanName
 	 * @return
@@ -350,9 +354,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 
 		// Create proxy if we have advice.
+		//1 找出指定 bean 对应的增强器 Advisor
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			//2 根据找出的增强器创建代理
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());
@@ -472,6 +478,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			}
 			else {
 				// 设置jdk代理接口
+				// 该方法会评估是否有代理接口  没有实现接口则会使用cglib代理
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
