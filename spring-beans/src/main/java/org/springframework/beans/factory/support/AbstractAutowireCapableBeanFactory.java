@@ -1898,12 +1898,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		else {
 			// 0.
+			// 处理 BeanNameAware BeanClassLoaderAware BeanFactoryAware
 			invokeAwareMethods(beanName, bean);
 		}
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
 			/**
+			 * 如执行ApplicationContextAwareProcessor 处理各种 Aware
+			 *
 			 * 1.在初始化之前执行的bean后置处理器，执行{@link BeanPostProcessor#postProcessBeforeInitialization}
 			 *
 			 * CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBeanPostProcessor#postProcessBeforeInitialization 调用被javax.annotation.PostConstruct注解的方法
