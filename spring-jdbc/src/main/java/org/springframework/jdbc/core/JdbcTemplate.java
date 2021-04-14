@@ -363,6 +363,15 @@ public class JdbcTemplate extends JdbcAccessor implements JdbcOperations {
 	// Methods dealing with static SQL (java.sql.Statement)
 	//-------------------------------------------------------------------------
 
+	/**
+	 * 是模板方法模式和回调模式的结合，是Template Method不需要继承的另一种实现方式
+	 * 不使用继承
+	 * 变化是一段代码而不是变量
+	 * @param action a callback that specifies the action
+	 * @param <T>
+	 * @return
+	 * @throws DataAccessException
+	 */
 	@Override
 	@Nullable
 	public <T> T execute(StatementCallback<T> action) throws DataAccessException {
