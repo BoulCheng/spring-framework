@@ -85,6 +85,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 		// （某些被适配会增加返回MethodInterceptor个数）
 		for (AdvisorAdapter adapter : this.adapters) {
 			if (adapter.supportsAdvice(advice)) {
+				// 适配器模式 某些Advice 适配成 MethodInterceptor
 				interceptors.add(adapter.getInterceptor(advisor));
 			}
 		}
