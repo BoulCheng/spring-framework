@@ -28,6 +28,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Scope {
 
+	/**
+	 * 默认单例
+	 * @return
+	 */
 	String value() default "singleton";
 
 }
