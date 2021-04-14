@@ -91,6 +91,9 @@ public class ByteArrayResource extends AbstractResource {
 	}
 
 	/**
+	 * 访问字节数组资源
+	 */
+	/**
 	 * This implementation returns a ByteArrayInputStream for the
 	 * underlying byte array.
 	 * @see java.io.ByteArrayInputStream

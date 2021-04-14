@@ -88,6 +88,9 @@ public class InputStreamResource extends AbstractResource {
 	}
 
 	/**
+	 * 访问输入流资源
+	 */
+	/**
 	 * This implementation throws IllegalStateException if attempting to
 	 * read the underlying stream multiple times.
 	 */

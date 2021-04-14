@@ -158,6 +158,9 @@ public class UrlResource extends AbstractFileResolvingResource {
 	}
 
 	/**
+	 * 访问网络资源
+	 */
+	/**
 	 * This implementation opens an InputStream for the given URL.
 	 * <p>It sets the {@code useCaches} flag to {@code false},
 	 * mainly to avoid jar file locking on Windows.
