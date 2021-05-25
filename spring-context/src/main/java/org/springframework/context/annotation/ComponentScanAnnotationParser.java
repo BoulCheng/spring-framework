@@ -119,7 +119,12 @@ class ComponentScanAnnotationParser {
 		for (Class<?> clazz : componentScan.getClassArray("basePackageClasses")) {
 			basePackages.add(ClassUtils.getPackageName(clazz));
 		}
+		//springboot启动类配置了@ComponentScan 如果@ComponentScan注解配置的包为空，则使用@Configuration注解的类的包作为扫描包
 		if (basePackages.isEmpty()) {
+			//springboot 应用程序主类 @SpringBootApplication注解的类 扫描该类所在的包及其子包
+			// Moreover, Spring Boot introduces the @SpringBootApplication annotation. This single annotation is equivalent to using @Configuration, @EnableAutoConfiguration, and @ComponentScan.
+			//Let's use this annotation in the main class of the application:
+			// As a result, when we run this Spring Boot application, it will automatically scan the components in the current package and its sub-packages. Thus it will register them in Spring's Application Context, and allow us to inject beans using @Autowired.
 			basePackages.add(ClassUtils.getPackageName(declaringClass));
 		}
 
