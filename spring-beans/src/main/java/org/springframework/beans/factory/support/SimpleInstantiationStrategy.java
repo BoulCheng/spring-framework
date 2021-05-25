@@ -65,6 +65,11 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 			synchronized (bd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
 				if (constructorToUse == null) {
+					/**
+					 * 举例: mybatis-spring中会重新设置BeanDefinition beanClass属性,
+					 * definition.setBeanClass(MapperFactoryBean.class);
+					 * 所以是MapperFactoryBean实例化
+					 */
 					final Class<?> clazz = bd.getBeanClass();
 					if (clazz.isInterface()) {
 						throw new BeanInstantiationException(clazz, "Specified class is an interface");

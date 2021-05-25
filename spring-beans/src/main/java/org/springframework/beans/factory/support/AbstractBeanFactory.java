@@ -1820,6 +1820,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			if (mbd != null) {
 				mbd.isFactoryBean = true;
 			}
+			//如果是FactoryBean切name以&开头直接返回FactoryBean实例
 			return beanInstance;
 		}
 
