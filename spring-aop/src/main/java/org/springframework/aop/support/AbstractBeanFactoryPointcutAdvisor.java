@@ -64,6 +64,8 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 	 * @see #getAdvice()
 	 */
 	public void setAdviceBeanName(@Nullable String adviceBeanName) {
+		// TODO: 2020/10/19
+		// TransactionInterceptor
 		this.adviceBeanName = adviceBeanName;
 	}
 

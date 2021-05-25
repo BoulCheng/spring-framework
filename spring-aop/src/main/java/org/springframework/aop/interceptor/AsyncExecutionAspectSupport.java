@@ -227,6 +227,7 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 	protected Executor getDefaultExecutor(@Nullable BeanFactory beanFactory) {
 		if (beanFactory != null) {
 			try {
+				// TODO: 2021/4/17  
 				// Search for TaskExecutor bean... not plain Executor since that would
 				// match with ScheduledExecutorService as well, which is unusable for
 				// our purposes here. TaskExecutor is more clearly designed for it.

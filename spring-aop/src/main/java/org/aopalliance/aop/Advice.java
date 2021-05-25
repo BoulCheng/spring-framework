@@ -17,6 +17,13 @@
 package org.aopalliance.aop;
 
 /**
+ * 通知定义了切面的工作是什么以及工作何时被执行 通知包含了需要用于多个应用对象的横切行为
+ * Advice
+ *
+ * MethodInterceptor 拦截器是一种通知的类型
+ */
+
+/**
  * Tag interface for Advice. Implementations can be any type
  * of advice, such as Interceptors.
  *

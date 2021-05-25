@@ -18,6 +18,16 @@ package org.springframework.aop;
 
 import org.aopalliance.aop.Advice;
 
+
+/**
+ * The Advisor interface allows support for different types of advice
+ * Base interface holding AOP <b>advice</b> (action to take at a joinpoint) and a filter determining the applicability of the advice (such as a pointcut)
+ *
+ * 通知定义了切面的工作是什么以及工作何时被执行 通知包含了需要用于多个应用对象的横切行为
+ *
+ * 事务复用这种结构
+ */
+
 /**
  * Base interface holding AOP <b>advice</b> (action to take at a joinpoint)
  * and a filter determining the applicability of the advice (such as
