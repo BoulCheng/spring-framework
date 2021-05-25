@@ -187,6 +187,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	protected Object doInvoke(Object... args) throws Exception {
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
+			// 反射调用(Controller)方法
 			return getBridgedMethod().invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

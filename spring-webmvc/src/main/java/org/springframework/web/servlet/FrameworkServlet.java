@@ -885,6 +885,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	}
 
 	/**
+	 *
+	 */
+	/**
 	 * Delegate GET requests to processRequest/doService.
 	 * <p>Will also be invoked by HttpServlet's default implementation of {@code doHead},
 	 * with a {@code NoBodyResponse} that just captures the content length.
@@ -898,6 +901,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		processRequest(request, response);
 	}
 
+	/**
+	 *
+	 */
 	/**
 	 * Delegate POST requests to {@link #processRequest}.
 	 * @see #doService
@@ -1003,6 +1009,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		initContextHolders(request, localeContext, requestAttributes);
 
 		try {
+			//
 			doService(request, response);
 		}
 		catch (ServletException | IOException ex) {

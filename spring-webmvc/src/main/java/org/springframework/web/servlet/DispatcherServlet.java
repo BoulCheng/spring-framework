@@ -903,6 +903,9 @@ public class DispatcherServlet extends FrameworkServlet {
 
 
 	/**
+	 *
+	 */
+	/**
 	 * Exposes the DispatcherServlet-specific request attributes and delegates to {@link #doDispatch}
 	 * for the actual dispatching.
 	 */
@@ -940,6 +943,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		try {
+			//
 			doDispatch(request, response);
 		}
 		finally {
@@ -987,6 +991,9 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 * 完整的请求处理过程
+	 */
+	/**
 	 * Process the actual dispatching to the handler.
 	 * <p>The handler will be obtained by applying the servlet's HandlerMappings in order.
 	 * The HandlerAdapter will be obtained by querying the servlet's installed HandlerAdapters
@@ -1012,6 +1019,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
+				// 根据 request 信息寻找对应的 Handler (HandlerMethod com.zlb.spring.practice.transactional.TestController#testget(HttpServletRequest))
 				// Determine handler for the current request.
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
@@ -1019,6 +1027,12 @@ public class DispatcherServlet extends FrameworkServlet {
 					return;
 				}
 
+				// 根据当前的 handler 寻找对应的 HandlerAdapter (RequestMappingHandlerAdapter)
+				/**
+				 * HandlerAdatper根据Handler规则执行不同的Handler。
+				 * DispatcherServlet根据HandlerMapping返回的handler，向HandlerAdatper发起请求，处理Handler。
+				 * HandlerAdatper使得Handler的扩展变得容易，只需要增加一个新的Handler和一个对应的HandlerAdapter即可。
+				 */
 				// Determine handler adapter for the current request.
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
@@ -1032,10 +1046,12 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
+				// 拦截器的 preHandler 方法的调用
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
+				// 真正的调用 handler 并返回视图
 				// Actually invoke the handler.
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
@@ -1043,7 +1059,9 @@ public class DispatcherServlet extends FrameworkServlet {
 					return;
 				}
 
+				// 视图名称转换应用于需要添加前缀后缀的情况
 				applyDefaultViewName(processedRequest, mv);
+				// 应用所有拦截器的 postHandle 方法
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
@@ -1113,6 +1131,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 		}
 
+		// 如果在 Handler 实例的处理中返回了view，那么需要要做页面的处理
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
 			render(mv, request, response);
@@ -1132,6 +1151,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		if (mappedHandler != null) {
+			// 完成处理调用触发器
 			// Exception (if any) is already handled..
 			mappedHandler.triggerAfterCompletion(request, response, null);
 		}
