@@ -123,6 +123,9 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 
 
 	/**
+	 * 判断发生异常是否需要回滚
+	 */
+	/**
 	 * Winning rule is the shallowest rule (that is, the closest in the
 	 * inheritance hierarchy to the exception). If no rule applies (-1),
 	 * return false.
@@ -137,6 +140,7 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 		RollbackRuleAttribute winner = null;
 		int deepest = Integer.MAX_VALUE;
 
+		// @Transaction注解配置的
 		if (this.rollbackRules != null) {
 			for (RollbackRuleAttribute rule : this.rollbackRules) {
 				int depth = rule.getDepth(ex);
@@ -154,6 +158,7 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 		// User superclass behavior (rollback on unchecked) if no rule matches.
 		if (winner == null) {
 			logger.trace("No relevant rollback rule found: applying default rules");
+			//默认 RuntimeException Error
 			return super.rollbackOn(ex);
 		}
 

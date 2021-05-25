@@ -277,9 +277,13 @@ public abstract class TransactionSynchronizationManager {
 	 * @see #registerSynchronization
 	 */
 	public static boolean isSynchronizationActive() {
+		// TODO: 2020/11/10
 		return (synchronizations.get() != null);
 	}
 
+	/**
+	 * 当前线程开启新事务 会调用该方法
+	 */
 	/**
 	 * Activate transaction synchronization for the current thread.
 	 * Called by a transaction manager on transaction begin.
@@ -305,7 +309,7 @@ public abstract class TransactionSynchronizationManager {
 	 */
 	public static void registerSynchronization(TransactionSynchronization synchronization)
 			throws IllegalStateException {
-
+// TODO: 2020/11/10
 		Assert.notNull(synchronization, "TransactionSynchronization must not be null");
 		Set<TransactionSynchronization> synchs = synchronizations.get();
 		if (synchs == null) {

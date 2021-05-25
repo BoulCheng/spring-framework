@@ -61,6 +61,10 @@ public abstract class DataSourceUtils {
 
 
 	/**
+	 * spring获取连接
+	 * {@link org.mybatis.spring.transaction.SpringManagedTransaction}
+	 */
+	/**
 	 * Obtain a Connection from the given DataSource. Translates SQLExceptions into
 	 * the Spring hierarchy of unchecked generic data access exceptions, simplifying
 	 * calling code and making any exception that is thrown more meaningful.

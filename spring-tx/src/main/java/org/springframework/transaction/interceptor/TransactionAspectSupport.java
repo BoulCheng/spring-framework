@@ -53,6 +53,12 @@ import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.StringUtils;
 
 /**
+ * 事务切面
+ *
+ * Base class for transactional aspects, such as the {@link TransactionInterceptor} or an AspectJ aspect.
+ */
+
+/**
  * Base class for transactional aspects, such as the {@link TransactionInterceptor}
  * or an AspectJ aspect.
  *
@@ -479,7 +485,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			return getTransactionManager();
 		}
 
-		String qualifier = txAttr.getQualifier();
+		String qualifier = txAttr.getQualifier(); //@Transaction value
 		if (StringUtils.hasText(qualifier)) {
 			return determineQualifiedTransactionManager(this.beanFactory, qualifier);
 		}
@@ -491,6 +497,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			if (defaultTransactionManager == null) {
 				defaultTransactionManager = this.transactionManagerCache.get(DEFAULT_TRANSACTION_MANAGER_KEY);
 				if (defaultTransactionManager == null) {
+					// 默认TransactionManager
 					defaultTransactionManager = this.beanFactory.getBean(TransactionManager.class);
 					this.transactionManagerCache.putIfAbsent(
 							DEFAULT_TRANSACTION_MANAGER_KEY, defaultTransactionManager);
@@ -662,6 +669,8 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 						"] after exception: " + ex);
 			}
 			if (txInfo.transactionAttribute != null && txInfo.transactionAttribute.rollbackOn(ex)) {
+				//回滚
+				// TODO: 2020/10/20
 				try {
 					txInfo.getTransactionManager().rollback(txInfo.getTransactionStatus());
 				}
@@ -679,6 +688,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				// We don't roll back on this exception.
 				// Will still roll back if TransactionStatus.isRollbackOnly() is true.
 				try {
+					//异常不需要回滚
 					txInfo.getTransactionManager().commit(txInfo.getTransactionStatus());
 				}
 				catch (TransactionSystemException ex2) {

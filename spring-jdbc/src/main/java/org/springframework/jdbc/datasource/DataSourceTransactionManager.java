@@ -262,7 +262,6 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	protected void doBegin(Object transaction, TransactionDefinition definition) {
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
 		Connection con = null;
-
 		try {
 			if (!txObject.hasConnectionHolder() ||
 					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
@@ -360,6 +359,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			logger.debug("Rolling back JDBC transaction on Connection [" + con + "]");
 		}
 		try {
+			// 回滚
 			con.rollback();
 		}
 		catch (SQLException ex) {
