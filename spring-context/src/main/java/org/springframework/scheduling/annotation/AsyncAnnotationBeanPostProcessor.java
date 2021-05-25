@@ -62,6 +62,9 @@ import org.springframework.util.function.SingletonSupplier;
  * @see ScheduledAnnotationBeanPostProcessor
  */
 @SuppressWarnings("serial")
+/**
+ * {@link Async @Async}
+ */
 public class AsyncAnnotationBeanPostProcessor extends AbstractBeanFactoryAwareAdvisingPostProcessor {
 
 	/**
@@ -151,6 +154,7 @@ public class AsyncAnnotationBeanPostProcessor extends AbstractBeanFactoryAwareAd
 			advisor.setAsyncAnnotationType(this.asyncAnnotationType);
 		}
 		advisor.setBeanFactory(beanFactory);
+		// AsyncAnnotationAdvisor
 		this.advisor = advisor;
 	}
 

@@ -67,6 +67,7 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 	 */
 	@Autowired(required = false)
 	void setConfigurers(Collection<AsyncConfigurer> configurers) {
+		// TODO: 2021/4/17  
 		if (CollectionUtils.isEmpty(configurers)) {
 			return;
 		}
