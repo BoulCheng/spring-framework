@@ -110,7 +110,7 @@ class ComponentScanAnnotationParser {
 		}
 
 		Set<String> basePackages = new LinkedHashSet<>();
-		String[] basePackagesArray = componentScan.getStringArray("basePackages");
+		String[] basePackagesArray = componentScan.getStringArray("basePackages"); //starter @ComponentScans 配置的basePackages扫描路径 // 根据容器扫描路径扫描beans
 		for (String pkg : basePackagesArray) {
 			String[] tokenized = StringUtils.tokenizeToStringArray(this.environment.resolvePlaceholders(pkg),
 					ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);

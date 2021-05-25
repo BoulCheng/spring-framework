@@ -72,6 +72,9 @@ class ConditionEvaluator {
 	}
 
 	/**
+	 * 整个Conditional逻辑生效的切人点，如果验证不通过则会直接忽略掉后面的解析逻辑，那么这个类的属性以及 componentScan 之类的配置也自然不会得到解析
+	 */
+	/**
 	 * Determine if an item should be skipped based on {@code @Conditional} annotations.
 	 * @param metadata the meta data
 	 * @param phase the phase of the call
@@ -137,6 +140,11 @@ class ConditionEvaluator {
 		@Nullable
 		private final ConfigurableListableBeanFactory beanFactory;
 
+
+		/**
+		 * PropertyResolver 的初始化以及相关属性的加载
+		 * Conditional 机制会使用
+		 */
 		private final Environment environment;
 
 		private final ResourceLoader resourceLoader;

@@ -87,6 +87,7 @@ public class ContextAnnotationAutowireCandidateResolver extends QualifierAnnotat
 			}
 			@Override
 			public Object getTarget() {
+				// TODO: 2021/4/17  
 				Object target = beanFactory.doResolveDependency(descriptor, beanName, null, null);
 				if (target == null) {
 					Class<?> type = getTargetClass();

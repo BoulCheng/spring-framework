@@ -496,6 +496,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return this.beanFactoryPostProcessors;
 	}
 
+	/**
+	 * 观察者模式
+	 * 主题是  AbstractApplicationContext
+	 * 观察者是 ApplicationListener
+	 * 事件 如容器刷新完事件 ContextRefreshedEvent
+	 * dubbo ServiceBean 服务延迟导出
+	 * @param listener the ApplicationListener to register
+	 */
 	@Override
 	public void addApplicationListener(ApplicationListener<?> listener) {
 		Assert.notNull(listener, "ApplicationListener must not be null");
@@ -980,6 +988,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	@Override
 	public void registerShutdownHook() {
+		//优雅下线 会向JVM注册一个shutdown hook，在接收到关闭通知的时候，进行bean的销毁，容器的销毁处理等操作 发布ContextClosedEvent时间
 		if (this.shutdownHook == null) {
 			// No shutdown hook registered yet.
 			this.shutdownHook = new Thread(SHUTDOWN_HOOK_THREAD_NAME) {

@@ -90,6 +90,7 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 			acc = this.applicationContext.getBeanFactory().getAccessControlContext();
 		}
 
+		// ApplicationContextAware
 		if (acc != null) {
 			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
 				invokeAwareInterfaces(bean);

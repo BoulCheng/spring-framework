@@ -254,6 +254,10 @@ class ConfigurationClassParser {
 	}
 
 	/**
+	 * Spring配置类解析及加载
+	 * 如自动配置类  META-INF/spring.factories 文件 org.springframework.boot.autoconfigure.EnableAutoConfiguration的配置
+	 */
+	/**
 	 * Apply processing and build a complete {@link ConfigurationClass} by reading the
 	 * annotations, members and methods from the source class. This method can be called
 	 * multiple times as relevant sources are discovered.
@@ -266,6 +270,7 @@ class ConfigurationClassParser {
 			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
 			throws IOException {
 
+		// TODO: 2020/11/1  
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
 			// Recursively process any member (nested) classes first
 			processMemberClasses(configClass, sourceClass, filter);
@@ -287,10 +292,13 @@ class ConfigurationClassParser {
 		// Process any @ComponentScan annotations
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
+		// 获取对应的注解配置信息
+		// 整个Conditional逻辑生效的切人点，如果验证不通过则会直接忽略掉后面的解析逻辑，那么这个类的属性以及 componentScan 之类的配置也自然不会得到解析
 		if (!componentScans.isEmpty() &&
 				!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
 			for (AnnotationAttributes componentScan : componentScans) {
 				// The config class is annotated with @ComponentScan -> perform the scan immediately
+				// 处理配置类
 				Set<BeanDefinitionHolder> scannedBeanDefinitions =
 						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
 				// Check the set of scanned definitions for any further config classes and parse recursively if needed
@@ -300,6 +308,7 @@ class ConfigurationClassParser {
 						bdCand = holder.getBeanDefinition();
 					}
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
+						// 所有扫描出来的类委托到 parse 方法中递归处理
 						parse(bdCand.getBeanClassName(), holder.getBeanName());
 					}
 				}

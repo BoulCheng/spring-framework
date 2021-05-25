@@ -36,6 +36,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringValueResolver;
 
 /**
+ *
+ * todo
+ * BeanFactoryPostProcessor 修改BeanDefinition属性
+ *
  * Specialization of {@link PlaceholderConfigurerSupport} that resolves ${...} placeholders
  * within bean definition property values and {@code @Value} annotations against the current
  * Spring {@link Environment} and its set of {@link PropertySources}.
